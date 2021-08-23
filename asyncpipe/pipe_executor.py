@@ -4,8 +4,8 @@ from typing import Callable
 import asyncio
 import inspect
 
-from lib.pipe_def import PipeExecutor
-from lib.pipe_errors import PIPEERRORPASSARGS, PIPEERRORARGSMERGE
+from pipe_def import PipeExecutor
+from pipe_errors import PIPEERRORPASSARGS, PIPEERRORARGSMERGE
 
 
 class AsyncPipe(PipeExecutor):

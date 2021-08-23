@@ -3,8 +3,8 @@ from typing import Callable
 
 import inspect
 
-from lib.pipe_def import PipeInspector
-from lib.pipe_errors import PIPEERRORROUTINE, PIPEERRORARGS, PIPEERRORCONARGS
+from pipe_def import PipeInspector
+from pipe_errors import PIPEERRORROUTINE, PIPEERRORARGS, PIPEERRORCONARGS
 
 
 class PipeInspect(PipeInspector):

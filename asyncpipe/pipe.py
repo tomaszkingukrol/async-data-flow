@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import asyncio
 import inspect
 
-from lib.pipe_executor import PipeExecutor, AsyncPipe
-from lib.pipe_inspector import PipeInspector, PipeInspect
+from pipe_executor import PipeExecutor, AsyncPipe
+from pipe_inspector import PipeInspector, PipeInspect
 
 class Pipe():
     def __init__(self, 
