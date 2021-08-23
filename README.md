@@ -1,2 +1,2 @@
 # async-pipe
-asynchronous stream processing with fork.
+asynchronous stream processing with forking and merging
