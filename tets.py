@@ -1,6 +1,14 @@
-a = 1,2,3
-b = 4,
-c = 5,6,7
+import asyncio
 
-d = (a) + b + (c)
-print(d)
+
+async def foo():
+    print('foo')
+
+
+async def main():
+    await foo()
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+    

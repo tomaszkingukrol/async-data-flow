@@ -28,6 +28,8 @@ To execute DataFlow and pass initial parameters:
     params = {'param_1': ..., 'param_2': ...}
     result = dataflow(params)
 
+If you want to run synchroous function not in separated thread but sequencially you should define them as async
+
 
 ## extended usage
 source, target | compare | s3_logger, notify
