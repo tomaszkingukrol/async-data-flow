@@ -1,13 +1,13 @@
 # async-data-flow
-Asynchronous data flow processing, support bot async coroutines and sync functions called as separated threads
+Asynchronous data flow processing, support both async coroutines and sync functions called as separated threads
 
 ## Introduction
 As an example, common data flow process is devided to three components:
 - Data Flow Source - get data from one or more sources
-- Data Flow Transform - e.g: merge data from multiple sources, transform data, split data to multiple destinations
+- Data Flow Transformation - e.g: merge data from multiple sources, transform data, split data to multiple destinations
 - Data Flow Destination - write data to one or more destinations
 
-To configure this you can define tuples:
+You can configure this by defining tuples:
 
     data_flow_source = source_1, source_2, source_3
     data_flow_transform = data_transformation_function,
@@ -15,9 +15,9 @@ To configure this you can define tuples:
 
     data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
 
-- data_flow_source is a tuple defining concurrent Data Flow Source components, commonly resposible for I/O reading operations
+- data_flow_source is a tuple defining concurrent Data Flow Source components, commonly resposible for data reading operations
 - data_flow_transform is a tuple defining sequence Data Flow Transform components (data transformation commonly do not need I/O operations)
-- data_flow_destination is a tuple defining concurrent Data Flow Destination components, commonly resposible for I/O writing operations
+- data_flow_destination is a tuple defining concurrent Data Flow Destination components, commonly resposible for data writing operations
 
 Each element of tuble must be Callable object, asynchronous or synchronous. Synchronous objects are callable in separated threads. 
 To execute DataFlow and pass initial parameters:
@@ -26,9 +26,44 @@ To execute DataFlow and pass initial parameters:
     
     dataflow = DataFlow(data_flow_definition)
     params = {'param_1': ..., 'param_2': ...}
-    result = dataflow(params)
+    result = await dataflow(params)
 
-If you want to run synchroous function not in separated thread but sequencially you should define them as async
+If you do not want to run data_transformation_function as separated thred define them as coroutine function (async).   
+
+## Example
+
+    import asyncio
+    import time
+    from asyncdataflow import DataFlow
+
+    async def sourceA(endpointA):
+        await asyncio.sleep(0.500)
+        return {'sourceA': [1,2,3,4,5,6]}
+
+    def sourceB(endpointB):
+        time.sleep(0.500)
+        return {'sourceA': [1,2,3,4,5,6]}       
+
+    async def data_merge(sourceA: tuple, sourceB: tuple):
+        return {'data': zip(sourceA, sourceB)}
+
+    async def destination(data):
+        await asyncio.sleep(0.500)
+        return {'status': 0}
+
+    async def main():
+
+        data_flow_source = sourceA, sourceB
+        data_flow_transform = data_merge,
+        data_flow_destination = destination,
+
+        data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
+
+        dataflow = DataFlow(data_flow_definition)
+        params = {'sourcaA': 'A', 'sourceB': 'B'}
+        return await dataflow(params)
+
+    asyncio.run(main())
 
 
 ## extended usage
