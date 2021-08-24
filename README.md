@@ -1,7 +1,16 @@
 # async-data-flow
 asynchronous data flow processing, support bot async coroutines and sync function called as separated thread
 
+## Introduction
+As an example, common data flow process is devided to three components:
+> Data Flow Source 
+> Data Flow Transform
+> Data Flow Destination
 
+
+
+
+## extended usage
 source, target | compare | s3_logger, notify
 ((source, target), compare, (s3_logger, notify))
 
