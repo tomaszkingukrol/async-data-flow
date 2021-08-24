@@ -3,9 +3,10 @@ Asynchronous data flow processing, support bot async coroutines and sync functio
 
 ## Introduction
 As an example, common data flow process is devided to three components:
-- Data Flow Source - get data from sources
-- Data Flow Transform - e.g: merge data from multiple sources, transform data, split data to multiple destinations
-- Data Flow Destination - write data to destinations
+- Data Flow Source - get data from one or more sources
+- Data Flow Transform - e.g: merge data from multiple sources, transform data, 
+split data to multiple destinations
+- Data Flow Destination - write data to one or more destinations
 
 To configure this you can define tuples:
 
@@ -15,14 +16,15 @@ To configure this you can define tuples:
 
     data_flow_definition = (data_flow_source, data_flow_transform, data_flow_destination)
 
-- data_flow_source is a tuple defining concurrent Data Flow Source components, each element must be Callable object,
-async or sync, commonly resposible for I/O reading operations
-- data_flow_transform is not a tuple and represent more common situation where data transformation can be processed 
-in single synchronous function (do not need I/O operation specyfic to asyncio processing)
-- data_flow_destination is a tuple defining concurrent Data Flow Destination components, each eleemnt must be Callable 
-object, async or sync, commonly resposible for I/O writing operations
+- data_flow_source is a tuple defining concurrent Data Flow Source components, 
+commonly resposible for I/O reading operations
+- data_flow_transform is not a tuple and represent more commonly situation 
+where data transformation can be processed in single synchronous function 
+(do not need I/O operation specyfic to asynchronous processing)
+- data_flow_destination is a tuple defining concurrent Data Flow Destination 
+components, commonly resposible for I/O writing operations
 
-To execute DataFlow and pass initial parameters:
+Each element of tuble must be Callable object, async or sync. To execute DataFlow and pass initial parameters:
 
     from asyncdataflow import DataFlow
     
