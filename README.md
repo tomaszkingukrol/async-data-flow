@@ -1,5 +1,5 @@
 # async-data-flow
-asynchronous data flow processing
+asynchronous data flow processing, support bot async coroutines and sync function called as separated thread
 
 
 source, target | compare | s3_logger, notify
