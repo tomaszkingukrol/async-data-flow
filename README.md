@@ -9,25 +9,24 @@ As an example, common data flow process is devided to three components:
 
 To configure this you can define tuples:
 
-    data_flow_source = (source_1, source_2, source_3)
-    data_flow_transform = data_transformation_function
-    data_flow_destination = (destination_1, destination_2)
+    data_flow_source = source_1, source_2, source_3
+    data_flow_transform = data_transformation_function,
+    data_flow_destination = destination_1, destination_2
 
-    data_flow_definition = (data_flow_source, data_flow_transform, data_flow_destination)
+    data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
 
 - data_flow_source is a tuple defining concurrent Data Flow Source components, commonly resposible for I/O reading operations
-- data_flow_transform is not a tuple and represent more commonly situation where data transformation can be processed in single      
-  synchronous function (do not need I/O operation specyfic to asynchronous processing)
+- data_flow_transform is a tuple defining sequence Data Flow Transform components (data transformation commonly do not need I/O operations)
 - data_flow_destination is a tuple defining concurrent Data Flow Destination components, commonly resposible for I/O writing operations
 
-Each element of tuble must be Callable object, async or sync. To execute DataFlow and pass initial parameters:
+Each element of tuble must be Callable object, asynchronous or synchronous. Synchronous objects are callable in separated threads. 
+To execute DataFlow and pass initial parameters:
 
     from asyncdataflow import DataFlow
     
     dataflow = DataFlow(data_flow_definition)
     params = {'param_1': ..., 'param_2': ...}
     result = dataflow(params)
-
 
 
 ## extended usage
