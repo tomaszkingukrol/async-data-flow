@@ -3,11 +3,11 @@ Asynchronous data flow processing, support bot async coroutines and sync functio
 
 ## Introduction
 As an example, common data flow process is devided to three components:
-> Data Flow Source
+> Data Flow Source - get data from sources
 
-> Data Flow Transform
+> Data Flow Transform - e.g: merge data from multiple sources, split data to multiple destinations, transform data
 
-> Data Flow Destination
+> Data Flow Destination - write data to destinations
 
 
 
