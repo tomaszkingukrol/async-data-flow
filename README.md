@@ -38,16 +38,16 @@ If you do not want to run data_transformation_function as separated thred define
 
     async def sourceA(endpointA):
         await asyncio.sleep(0.500)
-        return {'sourceA': [1,2,3,4,5,6]}
+        return {'sourceA': endpointA, 'dataA': [1,2,3,4,5,6]}
 
     def sourceB(endpointB):
         time.sleep(0.500)
-        return {'sourceA': [1,2,3,4,5,6]}       
+        return {'sourceB': endpointA, 'dataB': [1,2,3,4,5,6]}     
 
-    async def data_merge(sourceA: tuple, sourceB: tuple):
-        return {'data': zip(sourceA, sourceB)}
+    async def data_merge(sourceA: str, dataA: list, sourceB: str, dataB: list):
+        return {'source': f'zip({sourceA},{sourceB})', 'data': zip(dataA, dataB)}
 
-    async def destination(data):
+    async def destination(source, data):
         await asyncio.sleep(0.500)
         return {'status': 0}
 
