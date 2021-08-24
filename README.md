@@ -1,5 +1,5 @@
-# async-pipe
-asynchronous pipe processing in python
+# async-data-flow
+asynchronous data flow processing
 
 
 source, target | compare | s3_logger, notify
