@@ -100,7 +100,7 @@ args_mapper can also convert returned tuple or single value to dictionary so you
         await asyncio.sleep(0.500)
         return endpoint, [1,2,3,4,5,6]
 
-    sourceA = args_mapper(source, input={'enpoint': 'endpointA'}, output={'source': 'sourceA', 'data': 'dataA'})
+    sourceA = args_mapper(source, input={'enpoint': 'endpointA'}, output=['sourceA', 'dataA'])
 
 ## DataFlow
 
@@ -112,11 +112,11 @@ We can define DataFlow passing tuple:
 
     data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
 
-We can define this tuple directly:
+We can also define this tuple directly:
 
     data_flow_definition = ((sourceA, sourceB), data_merge, data_split, (destinationA, destinationB))
 
-In first tuple all element are executed sequentialy:
+In first tuple all elements are executed sequentialy:
 - (sourceA, sourceB)
 - data_merge
 - data_split
@@ -125,7 +125,8 @@ In first tuple all element are executed sequentialy:
 In nested tuples:
 - (sourceA, sourceB)
 - (destinationA, destinationB)
-each function are executed cuncurently.
+
+each elements are executed cuncurently.
 
 We also configure more complex Data Flow. FIrst tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution, next concurrent, mext sequentional, and so on:
 
