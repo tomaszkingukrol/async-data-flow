@@ -66,6 +66,8 @@ If you do not want to run data_transformation_function as separated thred define
     asyncio.run(main())
 
 
+
+
 ## extended usage
 source, target | compare | s3_logger, notify
 ((source, target), compare, (s3_logger, notify))
