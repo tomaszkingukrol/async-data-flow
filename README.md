@@ -149,7 +149,7 @@ In this example we have:
 
 ## infinity_loop
 
-We can run DataFlow in infinity loop:
+Process defined in DataFlow could be repeated in infinity loop.
 
     dataflow = DataFlow(data_flow_definition, infinity_loop=True)
 
