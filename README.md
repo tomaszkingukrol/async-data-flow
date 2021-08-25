@@ -65,44 +65,59 @@ If you do not want to run data_transformation_function as separated thred define
 
     asyncio.run(main())
 
+You can also run many cuncurrent async Data Flows:
+
+    ...
+
+        dataflow = DataFlow(data_flow_definition)
+        flows = list()
+        for p1, p2 in (('A', 'B'),('C', 'D'),('E', 'F'),('G', 'H')):
+            params = {'sourcaA': p1, 'sourceB': p2}
+            flow = asyncio.create_task(dataflow(params))
+            flows.append(flow)
+
+        asyncio.gather(*flows)
+
+Using Data Flow functions must return a dictionary suits to arguments of next executed functions (dictionary is unpacked to kwargs). Next functions do not must have all arguments returnet by previous function but all arguments of next functions must be covered by returned dictionary from previous function.
+
+## args_mapper
+
+We can use args_mapper to conver input and output from given function:
+
+    from asyncdataflow import args_mapper
+
+    async def source(endpoint):
+        await asyncio.sleep(0.500)
+        return {'source': endpointA, 'data': [1,2,3,4,5,6]}
+
+    sourceA = args_mapper(source, input={'enpoint': 'endpointA'}, output={'source': 'sourceA', 'data': 'dataA'})
+
+args_mapper can also convert returned tuple or single value to dictionary so you can write:
+
+    from asyncdataflow import args_mapper
+
+    async def source(endpoint):
+        await asyncio.sleep(0.500)
+        return endpoint, [1,2,3,4,5,6]
+
+    sourceA = args_mapper(source, input={'enpoint': 'endpointA'}, output={'source': 'sourceA', 'data': 'dataA'})
+
+## DataFlow
+
+We can define DataFlow passing tuple:
+
+    data_flow_source = sourceA, sourceB
+    data_flow_transform = data_merge, data_split
+    data_flow_destination = destinationA, destinationB,
+
+    data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
+
+We can define this tuple directly:
+
+    data_flow_definition = ((sourceA, sourceB),data_merge, data_split,(destinationA, destinationB))
 
 
-
-## extended usage
-source, target | compare | s3_logger, notify
-((source, target), compare, (s3_logger, notify))
-
-[{source, target}, compose, {s3_logger, notify}]
-
-get | transform | put
-(get, transform, put)
-
-discovery | save, log
-(discovery, (save, log))
+    
 
 
-dataflow = source, target | compare | s3_logger, notify
-
-dataflowsources -> dataflowtask -> dataflowdestinations
-
-
-one source -> split -> many outputs
-
-many source -> merge -> one output
-
-
-source | split | out1, out2
-
-sources = source
-task = split
-outputs = set(out1, out2)
-
-(source, split, (out1, out2))
-
-
-sources = set(src1, src2)
-task = merge
-outputs = out
-
-((src1, src2), merge, out)
 
