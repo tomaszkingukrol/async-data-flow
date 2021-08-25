@@ -1,5 +1,5 @@
 # async-data-flow
-Asynchronous data flow processing, support both async coroutines and sync functions called as separated threads
+Bundle few coroutines functions or sync functions into packege which can be executed like single coroutines. Is useful to asynchronous data flow processing.
 
 ## Introduction
 As an example, common data flow process is devided to three components:
@@ -16,10 +16,10 @@ You can configure this by defining tuples:
     data_flow_definition = (data_flow_source,) + data_flow_transform + (data_flow_destination,)
 
 - data_flow_source is a tuple defining concurrent Data Flow Source components, commonly resposible for data reading operations
-- data_flow_transform is a tuple defining sequence Data Flow Transform components (data transformation commonly do not need I/O operations)
+- data_flow_transform is a tuple defining sequence Data Flow Transformation components (data transformation commonly do not need I/O operations)
 - data_flow_destination is a tuple defining concurrent Data Flow Destination components, commonly resposible for data writing operations
 
-Each element of tuble must be Callable object, asynchronous or synchronous. Synchronous objects are callable in separated threads. 
+Each element of tuple must be Callable object, asynchronous or synchronous. Synchronous objects are callable in separated threads. 
 To execute DataFlow and pass initial parameters:
 
     from asyncdataflow import DataFlow
