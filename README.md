@@ -127,9 +127,18 @@ In nested tuples:
 - (destinationA, destinationB)
 each function are executed cuncurently.
 
-We also configure more complex Data Flow. FIrst tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution:
+We also configure more complex Data Flow. FIrst tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution, next concurrent, mext sequentional, and so on:
 
-    (sequentional: (concurrent: (sequentional: A, B), (sequentional: C, D)), (concurrent: (sequentional: E, F), (sequentional: G, H)))
+    (sequentional: 
+        (concurrent: 
+            (sequentional: A, B), 
+            (sequentional: C, D)
+        ), 
+        (concurrent: 
+            (sequentional: E, F), 
+            (sequentional: G, H)
+        )
+    )
 
 In this example we have:
 - two concurrent processes resposible for getting data (A and C) and data transformation (B, D)
