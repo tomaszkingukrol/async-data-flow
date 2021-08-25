@@ -1,10 +1,81 @@
 # async-data-flow
-Bundle few coroutines functions or sync functions into packege which can be executed like single coroutines. Is useful to asynchronous data flow processing.
+Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate wth many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
 
 ## Introduction
+Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally. Lets see simple example:
+
+    import asyncio
+    import time
+    from asyncdataflow import DataFlow
+
+    async def source(endpoint):
+        ...
+        return {'source': endpoint, 'data': [1,2,3,4,5,6]}
+
+    async def destination(source, data):
+        return {'status': 0}
+
+    async def main():
+
+        data_flow_definition = (source, destination)
+        dataflow = DataFlow(data_flow_definition)
+
+        for endpoint in (endpoint1, endpoint2, endpoint3)
+            params = {'endpoint': ...}
+            asyncio.create_task(dataflow(params))
+
+    asyncio.run(main())
+
+In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them in one db. 
+
+## args_mapper
+
+In data flow returned paarmeters from first element must be passed to next. This is given by unpacking dictionary to kwargs. So functions used in data flow should return dictionary with keys coresponding to argument of next functions. If we have function and want to implement this we can use args.mapper:
+
+    from asyncdataflow import args_mapper
+
+    async def foo(a):
+        ...
+        return data
+
+    bar = args_mapper(foo, input={'a': 'endpoint'}, output='data')  
+
+In python function can return multile outputs as tuple:
+
+    async def foo(a):
+        ...
+        return source, data
+
+    bar = args_mapper(foo, input={'a': 'endpoint'}, output=['source', 'data'])  
+
+Sometimes we should map returned dictioanry to another:
+
+    async def foo(a):
+        ...
+        return {'source': source, 'data': data}
+
+    bar = args_mapper(foo, input={'a': 'endpoint'}, output={'source': 'sourceA', 'data': 'dataA'})  
+
+If we need to pass extra parameter to next function in Data Flow we can use partial function:
+
+    from functools import partial
+
+    async def foo(creds, data):
+        ...
+
+    bar = partial(foo, creds = ...)
+
+
+    
+
+
+
+
+
+
 As an example, common data flow process is devided to three components:
 - Data Flow Source - get data from one or more sources
-- Data Flow Transformation - e.g: merge data from multiple sources, transform data, split data to multiple destinations
+- Data Flow Transformation - e.g: transform data, merge data from multiple sources, split data to multiple destinations
 - Data Flow Destination - write data to one or more destinations
 
 You can configure this by defining tuples:
