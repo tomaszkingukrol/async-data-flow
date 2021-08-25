@@ -1,5 +1,5 @@
 # async-data-flow
-Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate wth many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
+Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
 
 ## Introduction
 Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally. Lets see simple example:
@@ -13,20 +13,20 @@ Simple data flow process could be composed from two elements: get data and write
         return {'source': endpoint, 'data': [1,2,3,4,5,6]}
 
     async def destination(source, data):
+        ...
         return {'status': 0}
 
     async def main():
-
         data_flow_definition = (source, destination)
         dataflow = DataFlow(data_flow_definition)
 
-        for endpoint in (endpoint1, endpoint2, endpoint3)
-            params = {'endpoint': ...}
+        for endpoint in (endpoint1, endpoint2, endpoint3):
+            params = {'endpoint': endpoint}
             asyncio.create_task(dataflow(params))
 
     asyncio.run(main())
 
-In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them in one db. 
+In this example three concurent package are running. Initial parameters are passed to first function in data flow. This can be usefull for getting data from multiple sources and store them in one db. 
 
 ## args_mapper
 
@@ -48,7 +48,7 @@ In python function can return multile outputs as tuple:
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output=['source', 'data'])  
 
-Sometimes we should map returned dictioanry to another:
+Sometimes we should map returned dictionary to another:
 
     async def foo(a):
         ...
@@ -66,7 +66,7 @@ If we need to pass extra parameter to next function in Data Flow we can use part
     bar = partial(foo, creds = ...)
 
 
-    
+
 
 
 
