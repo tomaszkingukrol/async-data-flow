@@ -114,10 +114,21 @@ We can define DataFlow passing tuple:
 
 We can define this tuple directly:
 
-    data_flow_definition = ((sourceA, sourceB),data_merge, data_split,(destinationA, destinationB))
+    data_flow_definition = ((sourceA, sourceB), data_merge, data_split, (destinationA, destinationB))
 
+In first tuple all element are executed sequentialy:
+- (sourceA, sourceB)
+- data_merge
+- data_split
+- (destinationA, destinationB)
 
-    
+In nested tuples:
+- (sourceA, sourceB)
+- (destinationA, destinationB)
+each function are executed cuncurently.
 
+We also configure more complex Data Flow. FIrst tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution:
+
+    (sequentional: (concurrent: a,b,c), d, e, (concurrent: f, (sequentional: g, h), i), j)
 
 
