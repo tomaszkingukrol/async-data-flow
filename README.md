@@ -129,6 +129,17 @@ each function are executed cuncurently.
 
 We also configure more complex Data Flow. FIrst tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution:
 
-    (sequentional: (concurrent: a,b,c), d, e, (concurrent: f, (sequentional: g, h), i), j)
+    (sequentional: (concurrent: (sequentional: A, B), (sequentional: C, D)), (concurrent: (sequentional: E, F), (sequentional: G, H)))
 
+In this example we have:
+- two concurrent processes resposible for getting data (A and C) and data transformation (B, D)
+- getting data and data transformation works sequentionally
+- also we have two concurrent processes which can be resposoble for completelly different bussines functionalities but works on the same set of input data
+- each of them analize data (E and G) and save data in destinations (F and H)
+
+## infinity_loop
+
+We can run DataFlow in infinity loop:
+
+    dataflow = DataFlow(data_flow_definition, infinity_loop=True)
 
