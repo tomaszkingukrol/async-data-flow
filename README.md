@@ -17,8 +17,8 @@ Simple data flow process could be composed from two elements: get data and write
         return {'status': 0}
 
     async def main():
-        data_flow_definition = (source, destination)
-        dataflow = DataFlow(data_flow_definition)
+        dataflow_definition = (source, destination)
+        dataflow = DataFlow(dataflow_definition)
 
         for endpoint in (endpoint1, endpoint2, endpoint3):
             params = {'endpoint': endpoint}
@@ -26,7 +26,7 @@ Simple data flow process could be composed from two elements: get data and write
 
     asyncio.run(main())
 
-In this example three concurent package are running. Initial parameters are passed to first function in data flow. This can be usefull for getting data from multiple sources and store them in one db. 
+Initial parameters are passed to first function in data flow. In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them in one db. 
 
 ## args_mapper
 
@@ -56,6 +56,8 @@ Sometimes we should map returned dictionary to another:
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output={'source': 'sourceA', 'data': 'dataA'})  
 
+## passing extra parameters
+
 If we need to pass extra parameter to next function in Data Flow we can use partial function:
 
     from functools import partial
@@ -65,9 +67,15 @@ If we need to pass extra parameter to next function in Data Flow we can use part
 
     bar = partial(foo, creds = ...)
 
+## infinity_loop
 
+Process defined in DataFlow could be repeated in infinity loop.
 
+    dataflow = DataFlow(dataflow_definition, infinity_loop=True)
 
+This can be usefull e.g. for continous synchronization process
+
+# More complex use cases
 
 
 
