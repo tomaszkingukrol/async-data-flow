@@ -19,16 +19,23 @@ Simple data flow process could be composed from two elements: get data and write
         dataflow_definition = (source, destination)
         dataflow = DataFlow(dataflow_definition)
 
+        tasks = list()
         for endpoint in (endpoint1, endpoint2, endpoint3):
-            asyncio.create_task(dataflow(endpoint=endpoint))
+            tasks.append(asyncio.create_task(dataflow(endpoint=endpoint)))
+
+        asyncio.gather(*tasks)
 
     asyncio.run(main())
 
-Initial parameters are passed to first function in data flow. In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them in one db. 
+In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them e.g: in one db. 
+
+### passing args
+
+Initial arguments are passed to first function in data flow. All functions (async and sync) must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary with keys coresponding to arguments of next function. In concurrent processing (describing later) returned dictionaries are joined to one so each function must return dictionaries with others keys. Next function getting values from dictionary by merging keyword arguments with returned by previous function/functions dictionary. 
 
 ### args_mapper
 
-In data flow returned paarmeters from first element must be passed to next. This is given by unpacking dictionary to kwargs. So functions used in data flow should return dictionary with keys coresponding to argument of next functions. If we have function and want to implement this we can use args.mapper:
+We can use in Data Flow functions returned other values that dictionary. We can transform passed argumets and returned values using args_mapper:
 
     from asyncdataflow import args_mapper
 
@@ -69,6 +76,10 @@ e.g. this can be credentials needed to access to destination.
 
 ### geting output from package
 
+The package ending by executing last function/functions. Returned value/values from this function/functions are returned by package.
+
+    task = dataflow(endpoint=endpoint)
+    result = await task
 
 ### infinity_loop
 
