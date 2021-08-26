@@ -1,7 +1,7 @@
 # async-data-flow
 Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
 
-## Introduction
+### Introduction
 Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally. Lets see simple example:
 
     import asyncio
@@ -58,7 +58,7 @@ Sometimes we should map returned dictionary to another:
 
 ## passing extra parameters
 
-If we need to pass extra parameter to next function in Data Flow we can use partial function:
+If we need to pass extra parameter to next function in Data Flow we can use partial function from functools module:
 
     from functools import partial
 
@@ -75,7 +75,7 @@ Process defined in DataFlow could be repeated in infinity loop.
 
 This can be usefull e.g. for continous synchronization process
 
-# More complex use cases
+## More complex use cases
 
 
 
