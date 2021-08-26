@@ -45,6 +45,8 @@ We can use in Data Flow functions returned other values that dictionary. We can 
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output='data')  
 
+    bar(endpoint=...) -> {'data': data}
+
 In python function can return multile outputs as tuple:
 
     async def foo(a):
@@ -52,6 +54,8 @@ In python function can return multile outputs as tuple:
         return source, data
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output=['source', 'data'])  
+
+    bar(endpoint=...) -> {'source': source, 'data': data}
 
 Sometimes we should map returned dictionary to another:
 
@@ -61,9 +65,11 @@ Sometimes we should map returned dictionary to another:
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output={'source': 'source_a', 'data': 'data_a'})  
 
+    bar(endpoint=...) -> {'source'_a: source, 'data_a': data}
+
 ### passing extra parameters
 
-If we need to pass extra parameter to next function in Data Flow we can use partial function from functools module:
+If we need to pass extra parameters to function in Data Flow we can use partial function from functools module:
 
     from functools import partial
 
@@ -72,7 +78,7 @@ If we need to pass extra parameter to next function in Data Flow we can use part
 
     bar = partial(foo, creds = ...)
 
-e.g. this can be credentials needed to access to destination.
+this is useful to pass e.g. credentials to function responsible for saving data in destination
 
 ### geting output from package
 
@@ -91,7 +97,7 @@ This can be usefull e.g. for continous synchronization process.
 
 ## More complex use cases
 
-We can configure more complex data flow package. Data flow is defined as tuple which contain pipe of function executed sequencionally (one by one). We can add nested tuple inside which function will be executed concurrently
+We can configure more complex data flow package. Data flow is defined as tuple which contain pipe of functions executed sequencionally (one by one). We can add nested tuple inside which function will be executed concurrently
 
     import asyncio
     from functools import partial
@@ -155,4 +161,10 @@ For example if we want build request broker we can define package:
         ), 
         compose_response
     )
+
+where:
+- first function receive_request() is responsible for getting request
+- second function dispatch_request() is resposible for dispatching requests to concurrent sub-processes asking third system. In concurrent processing at least one function or sub-task must get arguments and be executed (function which do not get argument are not executed) so dispatch_request() should prepare arguments for only this functions which want to be executed
+- ask_system_x and transform_data_x functions getting responses from third systems
+- last compose_response return respons for received request
 
