@@ -2,7 +2,7 @@
 Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
 
 ## Introduction
-Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally. Lets see simple example:
+Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally:
 
     import asyncio
     from asyncdataflow import DataFlow
@@ -19,19 +19,23 @@ Simple data flow process could be composed from two elements: get data and write
         dataflow_definition = (source, destination)
         dataflow = DataFlow(dataflow_definition)
 
-        tasks = list()
-        for endpoint in (endpoint1, endpoint2, endpoint3):
-            tasks.append(asyncio.create_task(dataflow(endpoint=endpoint)))
-
-        asyncio.gather(*tasks)
+        await dataflow(endpoint=endpoint)
 
     asyncio.run(main())
 
-In this example three concurent package are running. This can be usefull for getting data from multiple sources and store them e.g: in one db. 
+In this example we call single package grabbing data from source and put them to destination. Of courde we can execute many of this packages using asyncio.create_task() function.
 
-### passing args
+### passing arguments and retrieving results in DataFlow
 
-Initial arguments are passed to first function in data flow. All functions (async and sync) must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary with keys coresponding to arguments of next function. In concurrent processing (describing later) returned dictionaries are joined to one so each function must return dictionaries with others keys. Next function getting values from dictionary by merging keyword arguments with returned by previous function/functions dictionary. 
+DataFlow class is Callable. When we create them we define elemets of DataFlow as a tuple containing functions:
+
+    (source, destination)
+
+We pass initial arguments to Data Flow when we call DataFlow class object. We must use only keyword arguments:
+
+    dataflow(endpoint=endpoint) 
+    
+Initial arguments are passed to first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to next element in DataFlow. Next element check if can pass all arguments to own function, if can execute this function, if not pass arguments to next element. This process continues until the end of DataFlow package. Package return dictionary from last executed function.
 
 ### args_mapper
 
