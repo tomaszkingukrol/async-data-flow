@@ -18,7 +18,6 @@ Simple data flow process could be composed from two elements: get data and write
     async def main():
         dataflow_definition = (source, destination)
         dataflow = DataFlow(dataflow_definition)
-
         await dataflow(endpoint=endpoint)
 
     asyncio.run(main())
@@ -33,7 +32,7 @@ DataFlow class is Callable. When we create them we define elemets of DataFlow as
 
 We pass initial arguments to Data Flow when we call DataFlow class object. We must use only keyword arguments:
 
-    dataflow(endpoint=endpoint) 
+    await dataflow(endpoint=endpoint) 
     
 Initial arguments are passed to first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to next element in DataFlow. Next element check if can pass all arguments to own function, if can execute this function, if not pass arguments to next element. This process continues until the end of DataFlow package. Package return dictionary from last executed function.
 
