@@ -56,7 +56,7 @@ In python function can return multile outputs as tuple:
         ...
         return source, data
 
-    bar = args_mapper(foo, input={'a': 'endpoint'}, output=['source', 'data'])  
+    bar = args_mapper(foo, input={'a': 'endpoint'}, output=('source', 'data'))  
 
     bar(endpoint=...) -> {'source': source, 'data': data}
 
@@ -160,3 +160,4 @@ where:
 - functions ask_system_x and transform_data_x functions getting responses from third systems and transform response
 - last function compose_response return respons for received request
 
+165 lines of code
