@@ -18,7 +18,7 @@ Simple data flow process could be composed from two elements: get data and write
     async def main():
         dataflow_definition = (source, destination)
         dataflow = DataFlow(dataflow_definition)
-        await dataflow(endpoint=endpoint)
+        result = await dataflow(endpoint=endpoint)
 
     asyncio.run(main())
 
@@ -34,7 +34,7 @@ We pass initial arguments to Data Flow when we call DataFlow class object. We mu
 
     await dataflow(endpoint=endpoint) 
     
-Initial arguments are passed to first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to next element in DataFlow. Next element check if can pass all arguments to own function, if can execute this function, if not pass arguments to next element. This process continues until the end of DataFlow package. Package return dictionary from last executed function.
+Initial arguments are passed to first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to next element in DataFlow. Next element check if can pass all arguments to own function, if yes execute this function, if not pass arguments to next element. This process continues until the end of DataFlow package. Package return dictionary from last executed function.
 
 ### args_mapper
 
@@ -72,35 +72,20 @@ Sometimes we should map returned dictionary to another:
 
 ### passing extra parameters
 
-If we need to pass extra parameters to function in Data Flow we can use partial function from functools module:
+If we need to pass extra parameters to not first function in DataFlow we must do that before DataFlow is defined. We can use partial function from functools module:
 
     from functools import partial
 
-    async def foo(creds, data):
+    async def foo(endpoint, data):
         ...
 
-    bar = partial(foo, creds = ...)
+    bar = partial(foo, endpoint = ...)
 
-this is useful to pass e.g. credentials to function responsible for saving data in destination
-
-### geting output from package
-
-The package ending by executing last function/functions. Returned value/values from this function/functions are returned by package.
-
-    task = dataflow(endpoint=endpoint)
-    result = await task
-
-### infinity_loop
-
-Process defined in DataFlow could be repeated in infinity loop.
-
-    dataflow = DataFlow(dataflow_definition, infinity_loop=True)
-
-This can be usefull e.g. for continous synchronization process.
+and in example above configure DataFlow using bar function except foo function. 
 
 ## More complex use cases
 
-We can configure more complex data flow package. Data flow is defined as tuple which contain pipe of functions executed sequencionally (one by one). We can add nested tuple inside which function will be executed concurrently
+We can configure more complex DataFlow package. DataFlow is defined as tuple which contain pipe of functions executed sequencionally (one by one). We can add nested tuple inside which functions will be executed concurrently:
 
     import asyncio
     from functools import partial
@@ -126,15 +111,19 @@ We can configure more complex data flow package. Data flow is defined as tuple w
         dataflow_definition = ((source_a, source_b), merge, dest)
         dataflow = DataFlow(dataflow_definition)
 
-        for query in (query_1, query_2, query_3):
-            params = {'query': query}
-            asyncio.create_task(dataflow(query=query))
+        queries = [...]
+        tasks = list()
+        for query in queries:
+            task = asyncio.create_task(dataflow(query=query))
+            tasks.append(task)
+
+        asyncio.gather(*tasks)
 
     asyncio.run(main())
 
-In this example two source functions are executed concurrently, data returned of them are merged to one dictionary (that must be renamed by args_mapper function) and passed to merge function. We use partial function from functools module to pass endpoint parameter to source and destination functons.
+In this example two source functions are executed concurrently, data returned of them are merged to one dictionary. Args_mapper decorator is used to change returned value to different keys corespondig with arguments of next function merge. Partial function is used to pass endpoint parameter to source and destination functons.
 
-Data Flow is a tuple. First tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuple define again sequentional execution, next concurrent, mext sequentional, and so on:
+DataFlow is defined by tuple. First tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuples define again sequentional execution, next concurrent, mext sequentional, and so on:
 
     (sequentional: 
         (concurrent: 
@@ -150,7 +139,7 @@ Data Flow is a tuple. First tuple define sequentional execution, nested tuples d
 For example if we want build request broker we can define package:
 
     (sequentional: 
-        receive_request,
+        check_cache,
         dispatch_request,
         (concurrent: 
             (sequentional: 
@@ -166,8 +155,8 @@ For example if we want build request broker we can define package:
     )
 
 where:
-- first function receive_request() is responsible for getting request
-- second function dispatch_request() is resposible for dispatching requests to concurrent sub-processes asking third system. In concurrent processing at least one function or sub-task must get arguments and be executed (function which do not get argument are not executed) so dispatch_request() should prepare arguments for only this functions which want to be executed
-- ask_system_x and transform_data_x functions getting responses from third systems
-- last compose_response return respons for received request
+- first function check_cache() looking into cache to find respose, if respose was finded function return response (if all next functions in DataFlow do not accept response argument will be not executed and package finish work and return response), if not return request
+- second function dispatch_request() prepare arguments fo next functions responsible for asking third systems. In concurrent processing at least one function or sub DataFlow must get arguments and be executed (function which do not get argument are not executed) so dispatch_request() should prepare arguments for only this functions which want to be executed
+- functions ask_system_x and transform_data_x functions getting responses from third systems and transform response
+- last function compose_response return respons for received request
 
