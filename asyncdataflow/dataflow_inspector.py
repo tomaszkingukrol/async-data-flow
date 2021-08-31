@@ -3,8 +3,8 @@ from typing import Callable, Tuple
 
 import inspect
 
-from dataflow_definition import DataFlowInspector
-from dataflow_error import DATAFLOW_ARGS_ERROR, DATAFLOW_DEFINITION_ERROR
+from .dataflow_definition import DataFlowInspector
+from .dataflow_error import DATAFLOW_ARGS_ERROR, DATAFLOW_DEFINITION_ERROR
 
 
 class DataFlowInspect(DataFlowInspector):

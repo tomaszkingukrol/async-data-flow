@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import asyncio
 import inspect
 
-from dataflow_executor import DataFlowExecutor, AsyncDataFlow
-from dataflow_inspector import DataFlowInspector, DataFlowInspect
+from .dataflow_executor import DataFlowExecutor, AsyncDataFlow
+from .dataflow_inspector import DataFlowInspector, DataFlowInspect
 
 
 class DataFlow():

@@ -4,8 +4,8 @@ from typing import Callable
 import asyncio
 import inspect
 
-from dataflow_definition import DataFlowExecutor
-from dataflow_error import DATAFLOWERRORPASSARGS, DATAFLOW_MERGE_ERROR
+from .dataflow_definition import DataFlowExecutor
+from .dataflow_error import DATAFLOWERRORPASSARGS, DATAFLOW_MERGE_ERROR
 
 
 class AsyncDataFlow(DataFlowExecutor):
