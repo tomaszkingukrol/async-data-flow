@@ -9,5 +9,5 @@ class DataFlowExecutor(ABC):
 
 class DataFlowInspector(ABC):
     @abstractmethod
-    def check_pipe_args(self, pipe: tuple) -> set:
+    def check_dataflow_args(self, pipe: tuple) -> set:
         pass
