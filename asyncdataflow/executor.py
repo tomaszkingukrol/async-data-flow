@@ -4,7 +4,7 @@ import asyncio
 import inspect
 
 from .definition import DataFlowExecutor
-from .errors import DATAFLOW_MERGE_ERROR
+from .exceptions import DATAFLOW_MERGE_ERROR
 
 
 class AsyncDataFlow(DataFlowExecutor):

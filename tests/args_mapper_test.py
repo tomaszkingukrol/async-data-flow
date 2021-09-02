@@ -1,7 +1,7 @@
 import pytest
 
 from asyncdataflow import args_mapper
-
+from asyncdataflow.exceptions import ArgsMapperError
 
 def foo(a, b):
     return a + b
@@ -35,14 +35,13 @@ def test_correct_input_mapping(func, input, input_map):
 INCORRECT_INPUT_MAPPING= [
     (foo, {'c': 1, 'b': 1}, {'a': 'd'}),
     (foo, {'a': 1, 'd': 1}, {'b': 'e'}),
-    (foo, {'c': 1, 'b': 1}, {'e': 'c'}),
     (foo, {'a': 1, 'd': 1}, {'e': 'c'}),
 ]
 
 @pytest.mark.parametrize("func, input, input_map", INCORRECT_INPUT_MAPPING)
 def test_incorrect_input_mapping(func, input, input_map):
     f = args_mapper(func=func, input=input_map)
-    with pytest.raises(TypeError):
+    with pytest.raises(ArgsMapperError):
         f(**input)
 
 
@@ -84,5 +83,25 @@ INCORRECT_OUTPUT_MAPPING= [
 @pytest.mark.parametrize("func, input, output, output_map", INCORRECT_OUTPUT_MAPPING)
 def test_incorrect_output_mapping(func, input, output, output_map):
     f = args_mapper(func=func, output=output_map)
-    with pytest.raises(TypeError):
+    with pytest.raises(ArgsMapperError):
         f(**input)
+
+
+INCORRECT_ARGS_MAPPING= [
+    (baz, {'a': 1, 'b': 2}, {'c': 1, 'd': 2}, {'c': 'a', 'd': 'f'}),
+    (baz, {'a': 1, 'b': 2}, {'c': 1, 'd': 2}, {'c': 'f', 'd': 'b'}),
+]
+
+
+INCORRECT_ARGS_MAPPING= [
+    (baz, {'d': 1, 'b': 1}, {'c': 'd'}),
+    (baz, {'a': 1, 'd': 1}, {'e': 'd'})
+]
+
+@pytest.mark.parametrize("func, input, input_map", INCORRECT_ARGS_MAPPING)
+def test_incorrect_args_mapping(func, input, input_map):
+    f = args_mapper(func=func, input=input_map)
+    with pytest.raises(ArgsMapperError):
+        f(**input)
+
+

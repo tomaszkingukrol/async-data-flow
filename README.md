@@ -1,8 +1,8 @@
 # async-data-flow
-Bundle coroutines into packege which can be executed like single coroutine. Inside package coroutines can be executed sequentially or concurent. Is useful to asynchronous data flow processing. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously module support execution synchronous functions as separated threads. 
+Bundle coroutines into package which can be executed as a single coroutine. In the package, coroutines can be executed sequentially or concurrently. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously, the module supports the execution of synchronous functions as separated threads. 
 
 ## Introduction
-Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequencally:
+Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequentially:
 
     import asyncio
     from asyncdataflow import DataFlow
@@ -22,23 +22,23 @@ Simple data flow process could be composed from two elements: get data and write
 
     asyncio.run(main())
 
-In this example we call single package grabbing data from source and put them to destination. Of courde we can execute many of this packages using asyncio.create_task() function.
+In this example, we call single package grabbing data from source and put them to destination. Of course we can execute many of these packages using asyncio.create_task() function.
 
 ### passing arguments and retrieving results in DataFlow
 
-DataFlow class is Callable. When we create them we define elemets of DataFlow as a tuple containing functions:
+DataFlow class is Callable. When we create them we define elements of DataFlow as a tuple containing functions:
 
     (source, destination)
 
-We pass initial arguments to Data Flow when we call DataFlow class object. We must use only keyword arguments:
+We pass initial arguments to DataFlow when we call DataFlow class object. We must use only keyword arguments:
 
     await dataflow(endpoint=endpoint) 
     
-Initial arguments are passed to first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to next element in DataFlow. Next element check if can pass all arguments to own function, if yes execute this function, if not pass arguments to next element. This process continues until the end of DataFlow package. Package return dictionary from last executed function.
+Initial arguments are passed to the first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to the next element in DataFlow. Next element checks if it can pass arguments to its own function, if yes, it executes this function, if not, it passes arguments to the next element. This process continues until the end of DataFlow package. The package returns the dictionary from the last executed function.
 
 ### args_mapper
 
-We can use in Data Flow functions returned other values that dictionary. We can transform passed argumets and returned values using args_mapper:
+We can use in DataFlow functions which return other values than the dictionary. We can transform passed arguments and returned values using args_mapper:
 
     from asyncdataflow import args_mapper
 
@@ -50,7 +50,7 @@ We can use in Data Flow functions returned other values that dictionary. We can 
 
     bar(endpoint=...) -> {'data': data}
 
-In python function can return multile outputs as tuple:
+Python function can return multile outputs as tuple:
 
     async def foo(a):
         ...
@@ -60,7 +60,7 @@ In python function can return multile outputs as tuple:
 
     bar(endpoint=...) -> {'source': source, 'data': data}
 
-Sometimes we should map returned dictionary to another:
+Sometimes we should map returned dictionary to another one:
 
     async def foo(a):
         ...
@@ -72,7 +72,7 @@ Sometimes we should map returned dictionary to another:
 
 ### passing extra parameters
 
-If we need to pass extra parameters to not first function in DataFlow we must do that before DataFlow is defined. We can use partial function from functools module:
+If we need to pass extra parameters to not the first function in DataFlow, we must do that before DataFlow is defined. We can use partial function from the functools module:
 
     from functools import partial
 
@@ -81,15 +81,15 @@ If we need to pass extra parameters to not first function in DataFlow we must do
 
     bar = partial(foo, endpoint = ...)
 
-and in example above configure DataFlow using bar function except foo function. 
+and in example above configure DataFlow using bar function instead of foo function. 
 
 ## More complex use cases
 
-We can configure more complex DataFlow package. DataFlow is defined as tuple which contain pipe of functions executed sequencionally (one by one). We can add nested tuple inside which functions will be executed concurrently:
+We can configure more complex DataFlow package. DataFlow is defined as a tuple which contains pipe of functions executed sequentially (one by one). We can add nested tuple inside which functions will be executed concurrently:
 
     import asyncio
     from functools import partial
-    from asyncdataflow import DataFlow
+    from asyncdataflow import DataFlow, args_mapper
 
     async def source(endpoint, query):
         ...
@@ -121,9 +121,9 @@ We can configure more complex DataFlow package. DataFlow is defined as tuple whi
 
     asyncio.run(main())
 
-In this example two source functions are executed concurrently, data returned of them are merged to one dictionary. Args_mapper decorator is used to change returned value to different keys corespondig with arguments of next function merge. Partial function is used to pass endpoint parameter to source and destination functons.
+In this example two source functions are executed concurrently, data returned from them are merged to one dictionary. Args_mapper is used to change returned value to different keys correspondig with arguments of next function merge. Partial function is used to pass endpoint parameter to source and destination functons.
 
-DataFlow is defined by tuple. First tuple define sequentional execution, nested tuples defines concurent execution, but next nested tuples define again sequentional execution, next concurrent, mext sequentional, and so on:
+DataFlow is defined by a tuple. The first tuple defines sequential execution, nested tuples define concurrent execution, but next nested tuples define again sequential execution, next concurrent, next sequential, and so on:
 
     (sequentional: 
         (concurrent: 
@@ -136,7 +136,7 @@ DataFlow is defined by tuple. First tuple define sequentional execution, nested 
         )
     )
 
-For example if we want build request broker we can define package:
+For example, if we want to develop request broker, we can define the package:
 
     (sequentional: 
         check_cache,
@@ -155,9 +155,53 @@ For example if we want build request broker we can define package:
     )
 
 where:
-- first function check_cache() looking into cache to find respose, if respose was finded function return response (if all next functions in DataFlow do not accept response argument will be not executed and package finish work and return response), if not return request
-- second function dispatch_request() prepare arguments fo next functions responsible for asking third systems. In concurrent processing at least one function or sub DataFlow must get arguments and be executed (function which do not get argument are not executed) so dispatch_request() should prepare arguments for only this functions which want to be executed
-- functions ask_system_x and transform_data_x functions getting responses from third systems and transform response
-- last function compose_response return respons for received request
+- first function check_cache() looks into cache to find the response, if the response was found, function returns them (if all next functions in DataFlow do not accept response argument, it will be not executed and package finishes work and returns this response), if not, returns request
+- second function dispatch_request() prepares arguments for next functions responsible for asking third systems. In concurrent processing at least one function or sub DataFlow must get arguments and be executed (the functions which do not get arguments are not executed) so dispatch_request() should prepare arguments for only these functions which want to be executed
+- functions ask_system_x and transform_data_x functions get responses from third systems and transform data
+- last function compose_response returns response for received request
 
-165 lines of code
+## Error handling
+
+DataFlow exception hierarchy:
+
+    TypeError (built-in):
+     +-- DataFlowException:
+          +-- DataFlowError:
+               +-- DataFlowDefinitionError:
+                    +-- DataFlowFunctionArgsError
+                    +-- 
+                    +-- 
+               +-- DataFlowRuntimeError:
+                    +-- 
+                    +--     
+          +-- ArgsMapperError:
+               +-- ArgsMapperInputKeyError
+               +-- ArgsMapperOutputKeyError
+               +-- ArgsMapperArgsError
+
+## Examples for error handling from args_mapper functions:
+
+    from asyncdataflow import args_mapper
+    from asyncdataflow.exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
+
+    def foo(a, b):
+        return {'a': a, 'b': b}
+
+    bar = args_mapper(func=foo, input={'a': 'd'})
+    try:
+        bar(c=1, b=2)
+    except ArgsMapperInputKeyError as e:
+        print(e)
+
+    bar = args_mapper(func=foo, output={'a': 'd'})
+    try:
+        bar(a=1, b=2)
+    except ArgsMapperOutputKeyError as e:
+        print(e)
+
+    bar = args_mapper(func=foo, input={'c': 'd'})
+    try:
+        bar(d=1, b=2)
+    except ArgsMapperArgsError as e:
+        print(e)   
+
