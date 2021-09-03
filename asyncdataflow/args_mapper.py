@@ -16,7 +16,6 @@ def _input_mapper(func_name: str, input: dict, kwargs: dict):
 def _output_mapper(func_name: str, output: dict or tuple or object, result: dict or tuple or object):
     if isinstance(output, dict):
         try:
-            # res = {k: result[v] for k, v in output.items()}
             res = dict()
             for k, v in output.items():
                 res[k] = result[v]

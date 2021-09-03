@@ -164,20 +164,19 @@ where:
 
 DataFlow exception hierarchy:
 
-    TypeError (built-in):
-     +-- DataFlowException:
-          +-- DataFlowError:
-               +-- DataFlowDefinitionError:
-                    +-- DataFlowFunctionArgsError
-                    +-- 
-                    +-- 
-               +-- DataFlowRuntimeError:
-                    +-- 
-                    +--     
-          +-- ArgsMapperError:
-               +-- ArgsMapperInputKeyError
-               +-- ArgsMapperOutputKeyError
-               +-- ArgsMapperArgsError
+    +-- DataFlowException:
+         +-- DataFlowError:
+              +-- DataFlowDefinitionError:
+                   +-- DataFlowFunctionArgsError
+                   +-- 
+                   +-- 
+              +-- DataFlowRuntimeError:
+                   +-- 
+                   +--     
+         +-- ArgsMapperError:
+              +-- ArgsMapperInputKeyError
+              +-- ArgsMapperOutputKeyError
+              +-- ArgsMapperArgsError
 
 ## Examples for error handling from args_mapper functions:
 

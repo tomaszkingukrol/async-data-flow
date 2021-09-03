@@ -4,7 +4,7 @@ import asyncio
 import inspect
 
 from .definition import DataFlowExecutor
-from .exceptions import DATAFLOW_MERGE_ERROR
+from .exceptions import DataFlowMergeResultError
 
 
 class AsyncDataFlow(DataFlowExecutor):
@@ -51,7 +51,7 @@ class AsyncDataFlow(DataFlowExecutor):
                 kw = await task
                 if kw:
                     if set(kwargs.keys()).intersection(kw.keys()):
-                        raise TypeError(DATAFLOW_MERGE_ERROR.format(task.__name__))
+                        raise DataFlowMergeResultError(kw.keys(), kwargs.keys())
                     kwargs.update(kw)
 
         return kwargs

@@ -4,7 +4,7 @@ from typing import Callable, Tuple
 import inspect
 
 from .definition import DataFlowInspector
-from .exceptions import DATAFLOW_ARGS_ERROR, DATAFLOW_DEFINITION_ERROR, DATAFLOW_EMPTY_ERROR, DataFlowFunctionArgsError
+from .exceptions import DataFlowFunctionArgsError, DataFlowNotCallableError, DataFlowEmptyError
 
 
 class DataFlowInspect(DataFlowInspector):
@@ -17,9 +17,9 @@ class DataFlowInspect(DataFlowInspector):
                 elif isinstance(task, Callable):
                     self._check_positional_or_keyword_args(task)
                 else:
-                    raise TypeError(DATAFLOW_DEFINITION_ERROR.format(task))
+                    raise DataFlowNotCallableError(task)
         else:
-            raise TypeError(DATAFLOW_EMPTY_ERROR)
+            raise DataFlowEmptyError()
 
     @staticmethod
     def _check_positional_or_keyword_args(func: Callable) -> bool:
