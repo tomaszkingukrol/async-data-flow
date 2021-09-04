@@ -26,4 +26,4 @@ class DataFlowInspect(DataFlowInspector):
         inspect_args = inspect.signature(func).parameters.values()
         for arg in inspect_args:
             if str(arg.kind) != 'POSITIONAL_OR_KEYWORD':
-                raise DataFlowFunctionArgsError(arg, func.__name__)
+                raise DataFlowFunctionArgsError(func.__name__, arg)

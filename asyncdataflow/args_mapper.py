@@ -3,24 +3,24 @@ from .exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsM
 
 
 def _input_mapper(func_name: str, input: dict, kwargs: dict):
-    try:
-        for k, v in input.items():
+    for k, v in input.items():
+        try:
             value = kwargs[v]
             del kwargs[v]
             kwargs[k] = value
-    except KeyError:
-        raise ArgsMapperInputKeyError(v, kwargs, func_name)
+        except KeyError:
+            raise ArgsMapperInputKeyError(func_name, kwargs, v)
     return kwargs
 
 
 def _output_mapper(func_name: str, output: dict or tuple or object, result: dict or tuple or object):
     if isinstance(output, dict):
-        try:
-            res = dict()
-            for k, v in output.items():
+        res = dict()
+        for k, v in output.items():
+            try:
                 res[k] = result[v]
-        except KeyError:
-            raise ArgsMapperOutputKeyError(v, result, func_name)
+            except KeyError:
+                raise ArgsMapperOutputKeyError(func_name, result, v)
     elif isinstance(output, tuple):
         res = {k: v for k, v in zip(output, result)}
     elif output:
@@ -39,7 +39,7 @@ def args_mapper(func, input: dict = None, output: dict = None):
         try:
             result = func(**kwargs)
         except TypeError:
-            raise ArgsMapperArgsError(kwargs, func.__name__)  
+            raise ArgsMapperArgsError(func.__name__, kwargs)  
         if output:
             result = _output_mapper(func.__name__, output, result)
         return result

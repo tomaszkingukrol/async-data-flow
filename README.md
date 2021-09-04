@@ -168,15 +168,30 @@ DataFlow exception hierarchy:
          +-- DataFlowError:
               +-- DataFlowDefinitionError:
                    +-- DataFlowFunctionArgsError
-                   +-- 
-                   +-- 
+                   +-- DataFlowNotCallableError
+                   +-- DataFlowEmptyError
               +-- DataFlowRuntimeError:
-                   +-- 
-                   +--     
+                   +-- DataFlowMergeResultError  
          +-- ArgsMapperError:
               +-- ArgsMapperInputKeyError
               +-- ArgsMapperOutputKeyError
               +-- ArgsMapperArgsError
+
+- DataFlowFunctionArgsError: raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments
+- DataFlowNotCallableError: raised when DataFlow contain not callable objects
+- DataFlowEmptyError: Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty
+- DataFlowMergeResultError: raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions
+- ArgsMapperInputKeyError: Raised when mapping defined in input argument do not correspond to initial function arguments
+- ArgsMapperOutputKeyError: Raised when mapping defined in output argument do not correspond to returned from function dictionary
+- ArgsMapperArgsError: Raised when passed arguments to functions do not fit to origin arguments
+
+## Examples for error handling from DataFlow definition:
+
+
+
+## Examples for error handling from DataFlow runtime:
+
+
 
 ## Examples for error handling from args_mapper functions:
 
