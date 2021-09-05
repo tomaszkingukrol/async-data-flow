@@ -1,5 +1,6 @@
 _DATAFLOW_FUNCTION_ARGS_ERROR = 'Argument {1} in function {0} must be POSITIONAL_OR_KEYWORD argument.'
 _DATAFLOW_NOT_CALLABLE_ERROR = '{0} is not a callable object. DataFlow can contain only callable objects.'
+_DATAFLOW_NOT_TUPLE_ERROR = '{0} is not a tuple. DataFlow must be defined as tuple'
 _DATAFLOW_EMPTY_ERROR = 'DataFlow or sub DataFlow cannot be empty.'
 _DATAFLOW_MERGE_ERROR = 'Conflict with merge {0} to {1}.'
 
@@ -47,21 +48,28 @@ class DataFlowDefinitionError(DataFlowError):
 class DataFlowFunctionArgsError(DataFlowDefinitionError):
     '''Raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments.
     '''
-    def __init__(self, *args, error_string: str):
+    def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_FUNCTION_ARGS_ERROR)      
 
 
 class DataFlowNotCallableError(DataFlowDefinitionError):
     '''Raised when DataFlow contain not callable objects.
     '''
-    def __init__(self, *args, error_string: str):
+    def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_NOT_CALLABLE_ERROR) 
+
+
+class DataFlowNotTupleError(DataFlowDefinitionError):
+    '''Raised when DataFlow is defined as other that tuple collection.
+    '''
+    def __init__(self, *args):
+        super(__class__, self).__init__(*args, error_string=_DATAFLOW_NOT_TUPLE_ERROR) 
 
 
 class DataFlowEmptyError(DataFlowDefinitionError):
     '''Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty.
     '''
-    def __init__(self, *args, error_string: str):
+    def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_EMPTY_ERROR) 
 
 

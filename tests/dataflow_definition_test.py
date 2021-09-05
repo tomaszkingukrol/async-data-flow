@@ -1,6 +1,7 @@
 import pytest
 
 from asyncdataflow import DataFlow
+from asyncdataflow.exceptions import DataFlowNotCallableError, DataFlowEmptyError, DataFlowNotTupleError
 
 
 def foo():
@@ -32,12 +33,12 @@ EMPTY_DATAFLOW = [
 
 @pytest.mark.parametrize("dataflow", EMPTY_DATAFLOW)
 def test_dataflow_from_empty(dataflow):
-    with pytest.raises(TypeError):
+    with pytest.raises(DataFlowEmptyError):
         df = DataFlow(dataflow)
 
 
 DATAFLOW_NOT_FUNCTIONS = [
-    (1),
+    (1,),
     (foo, 1),
     (foo, (1, foo)),
     ((foo, 1), (1, foo))
@@ -45,7 +46,7 @@ DATAFLOW_NOT_FUNCTIONS = [
 
 @pytest.mark.parametrize("dataflow", DATAFLOW_NOT_FUNCTIONS)
 def test_dataflow_from_not_functions(dataflow):
-    with pytest.raises(TypeError):
+    with pytest.raises(DataFlowNotCallableError):
         df = DataFlow(dataflow)
 
 
@@ -64,5 +65,5 @@ DATAFLOW_NOT_TUPLES = [
 
 @pytest.mark.parametrize("dataflow", DATAFLOW_NOT_TUPLES)
 def test_dataflow_from_not_tuples(dataflow):
-    with pytest.raises(TypeError):
+    with pytest.raises(DataFlowNotTupleError):
         df = DataFlow(dataflow)

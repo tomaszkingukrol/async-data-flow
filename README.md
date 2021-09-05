@@ -162,6 +162,7 @@ DataFlow exception hierarchy:
     +-- DataFlowException:
          +-- DataFlowError:
               +-- DataFlowDefinitionError:
+                   +-- DataFlowNotTupleError
                    +-- DataFlowFunctionArgsError
                    +-- DataFlowNotCallableError
                    +-- DataFlowEmptyError
@@ -172,6 +173,7 @@ DataFlow exception hierarchy:
               +-- ArgsMapperOutputKeyError
               +-- ArgsMapperArgsError
 
+- DataFlowNotTupleError: raised when DataFlow is defined as other that tuple collection
 - DataFlowFunctionArgsError: raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments
 - DataFlowNotCallableError: raised when DataFlow contain not callable objects
 - DataFlowEmptyError: Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty

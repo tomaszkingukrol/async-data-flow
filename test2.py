@@ -4,6 +4,8 @@ from asyncdataflow.exceptions import DataFlowFunctionArgsError, DataFlowNotCalla
 def foo(a, b):
     return {'a': a, 'b': b}
 
+
+
 bar = args_mapper(func=foo, input={'a': 'd'})
 try:
     bar(c=1, b=2)
