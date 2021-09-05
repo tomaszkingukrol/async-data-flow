@@ -1,5 +1,5 @@
-from asyncdataflow import args_mapper
-from asyncdataflow.exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
+from asyncdataflow import DataFlow
+from asyncdataflow.exceptions import DataFlowFunctionArgsError, DataFlowNotCallableError, DataFlowEmptyError
 
 def foo(a, b):
     return {'a': a, 'b': b}

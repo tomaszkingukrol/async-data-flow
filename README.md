@@ -136,29 +136,24 @@ DataFlow is defined by a tuple. The first tuple defines sequential execution, ne
         )
     )
 
-For example, if we want to develop request broker, we can define the package:
+For example:
 
     (sequentional: 
         check_cache,
         dispatch_request,
         (concurrent: 
             (sequentional: 
-                ask_system_a,
-                transform_data_a
+                get_data_from_a,
+                transform_data_from_a
             ), 
             (sequentional: 
-                ask_system_b,
-                transform_data_b
+                get_data_from_b,
+                transform_data_from_b
             )
         ), 
-        compose_response
+        prepare_response,
+        save_to_cache
     )
-
-where:
-- first function check_cache() looks into cache to find the response, if the response was found, function returns them (if all next functions in DataFlow do not accept response argument, it will be not executed and package finishes work and returns this response), if not, returns request
-- second function dispatch_request() prepares arguments for next functions responsible for asking third systems. In concurrent processing at least one function or sub DataFlow must get arguments and be executed (the functions which do not get arguments are not executed) so dispatch_request() should prepare arguments for only these functions which want to be executed
-- functions ask_system_x and transform_data_x functions get responses from third systems and transform data
-- last function compose_response returns response for received request
 
 ## Error handling
 
@@ -185,15 +180,15 @@ DataFlow exception hierarchy:
 - ArgsMapperOutputKeyError: Raised when mapping defined in output argument do not correspond to returned from function dictionary
 - ArgsMapperArgsError: Raised when passed arguments to functions do not fit to origin arguments
 
-## Examples for error handling from DataFlow definition:
+### Examples for error handling from DataFlow definition:
 
 
 
-## Examples for error handling from DataFlow runtime:
+### Examples for error handling from DataFlow runtime:
 
 
 
-## Examples for error handling from args_mapper functions:
+### Examples for error handling from args_mapper functions:
 
     from asyncdataflow import args_mapper
     from asyncdataflow.exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
