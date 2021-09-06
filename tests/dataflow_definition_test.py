@@ -1,5 +1,4 @@
 import pytest
-
 from asyncdataflow import DataFlow
 from asyncdataflow.exceptions import DataFlowNotCallableError, DataFlowEmptyError, DataFlowNotTupleError
 

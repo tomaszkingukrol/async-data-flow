@@ -34,7 +34,7 @@ class DataFlowRunItemError(DataFlowError):
 class DataFlowMergeResultError(DataFlowRunItemError):
     '''Raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions.
     '''
-    def __init__(self, *args, error_string: str):
+    def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_MERGE_ERROR) 
 
 

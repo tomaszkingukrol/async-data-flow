@@ -61,7 +61,11 @@ class AsyncDataFlow(DataFlowExecutor):
     @staticmethod
     def _map_kwargs (func: Callable, kwargs) -> dict:
         f_args = inspect.getfullargspec(func).args
-        return {k: kwargs[k] for k in f_args}
+        try:
+            result = {k: kwargs[k] for k in f_args}
+        except KeyError:
+            result = None
+        return result
             
     @staticmethod
     def _map_kwargs_to_args(func: Callable, kwargs) -> list:

@@ -1,15 +1,13 @@
 import pytest
-
 from asyncdataflow import args_mapper
 from asyncdataflow.exceptions import ArgsMapperError
+
 
 def foo(a, b):
     return a + b
 
-
 def bar(a, b):
     return a, b
-
 
 def baz(a, b):
     return {'a': a, 'b': b}
@@ -91,7 +89,6 @@ INCORRECT_ARGS_MAPPING= [
     (baz, {'a': 1, 'b': 2}, {'c': 1, 'd': 2}, {'c': 'a', 'd': 'f'}),
     (baz, {'a': 1, 'b': 2}, {'c': 1, 'd': 2}, {'c': 'f', 'd': 'b'}),
 ]
-
 
 INCORRECT_ARGS_MAPPING= [
     (baz, {'d': 1, 'b': 1}, {'c': 'd'}),

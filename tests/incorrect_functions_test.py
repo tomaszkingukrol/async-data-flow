@@ -1,5 +1,4 @@
 import pytest
-
 from asyncdataflow import DataFlow
 from asyncdataflow.exceptions import DataFlowFunctionArgsError
 
@@ -15,6 +14,7 @@ def baz(**kwargs):
 
 def bax(*, a, b):
     pass
+
 
 INCORRECT_FUNCTION = [
     (foo,),

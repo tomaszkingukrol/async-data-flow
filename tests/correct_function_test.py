@@ -1,11 +1,9 @@
 import pytest
-
 from asyncdataflow import DataFlow
 
 
 def foo():
     pass
-
 
 async def bar():
     pass
@@ -26,5 +24,3 @@ async def test_correct_function(dataflow):
         assert False
     else:
         assert True
-
-
