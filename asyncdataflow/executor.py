@@ -8,6 +8,8 @@ from .exceptions import DataFlowMergeResultError
 
 
 class AsyncDataFlow(DataFlowExecutor):
+    ''' Define executor of coroutine functions and sync function in async-data-flow
+    '''
 
     async def run(self, dataflow: tuple, **kwargs):
         return await self._run_sequence(dataflow, **kwargs)

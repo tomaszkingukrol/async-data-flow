@@ -8,8 +8,10 @@ from .exceptions import DataFlowFunctionArgsError, DataFlowNotCallableError, Dat
 
 
 class DataFlowInspect(DataFlowInspector):
+    ''' Define inspection of DataFlow defined in async-data-flow
+    '''
   
-    def check_dataflow_args(self, dataflow: tuple) -> set:
+    def check_dataflow_args(self, dataflow: tuple):
         if isinstance(dataflow, tuple): 
             if dataflow:
                 for task in dataflow:

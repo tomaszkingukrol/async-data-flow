@@ -7,19 +7,26 @@ from .inspector import DataFlowInspector, DataFlowInspect
 
 
 class DataFlow:
+    ''' Callable class defining async-data-flow.
+    '''
     def __init__(self, 
                  dataflow: tuple, 
                  *, 
                  executor: DataFlowExecutor = AsyncDataFlow(),
                  inspector: DataFlowInspector = DataFlowInspect(),
+                 is_permanent = False
                 ):
         self.dataflow = dataflow
         self.executor = executor
         self.inspector = inspector
         self.inspector.check_dataflow_args(self.dataflow) 
+        self.is_permanent = is_permanent
         
     async def __call__(self, **kwargs):
-        return await self.executor.run(self.dataflow, **kwargs)
-
+        while True:
+            result = await self.executor.run(self.dataflow, **kwargs)
+            if not self.is_permanent:
+                break
+        return result
 
     
