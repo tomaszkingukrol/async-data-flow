@@ -6,7 +6,7 @@ from .executor import DataFlowExecutor, AsyncDataFlow
 from .inspector import DataFlowInspector, DataFlowInspect
 
 
-class DataFlow():
+class DataFlow:
     def __init__(self, 
                  dataflow: tuple, 
                  *, 

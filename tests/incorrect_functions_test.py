@@ -7,18 +7,20 @@ from asyncdataflow.exceptions import DataFlowFunctionArgsError
 def foo(*args):
     pass
 
-
 def bar(*args, **kwargs):
     pass
 
+def baz(**kwargs):
+    pass
 
-def baz(*, a, b):
+def bax(*, a, b):
     pass
 
 INCORRECT_FUNCTION = [
     (foo,),
     (bar,),
     (baz,),
+    (bax,),
 ]
 
 @pytest.mark.asyncio
