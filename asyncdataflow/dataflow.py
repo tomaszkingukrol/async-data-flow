@@ -7,14 +7,21 @@ from .inspector import DataFlowInspector, DataFlowInspect
 
 
 class DataFlow:
-    ''' Callable class defining async-data-flow.
+    ''' Callable class defining async-data-flow. DataFlwo is defined as tuple.
+Args:
+dataflow: tuple - tuple defining DataFlow
+is_permanent: bool (default False) - True run DataFlow in infinity loop
+args_publish: str (default 'None') - Initial arguments re passed only to first function, 
+'Inintial' - iniatial argumets are passed to all functions in DataFlow
+'All' - all returned dictionaries by functions are conveted to args and passed to next functions in DataFlow
     '''
     def __init__(self, 
                  dataflow: tuple, 
                  *, 
                  executor: DataFlowExecutor = AsyncDataFlow(),
                  inspector: DataFlowInspector = DataFlowInspect(),
-                 is_permanent = False
+                 is_permanent = False,
+                 args_publish = 'None' # 'Initial', 'All'
                 ):
         self.dataflow = dataflow
         self.executor = executor
