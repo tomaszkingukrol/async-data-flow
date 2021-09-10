@@ -19,8 +19,8 @@ class DataFlow:
         self.dataflow = dataflow
         self.executor = executor
         self.inspector = inspector
-        self.inspector.check_dataflow_args(self.dataflow) 
         self.is_permanent = is_permanent
+        # self.inspector.check_dataflow_args(self.dataflow) 
         
     async def __call__(self, **kwargs):
         while True:

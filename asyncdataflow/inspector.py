@@ -30,5 +30,6 @@ class DataFlowInspect(DataFlowInspector):
     def _check_positional_or_keyword_args(func: Callable) -> bool:
         inspect_args = inspect.signature(func).parameters.values()
         for arg in inspect_args:
+            print(str(arg.kind))
             if str(arg.kind) != 'POSITIONAL_OR_KEYWORD':
                 raise DataFlowFunctionArgsError(func.__name__, arg)
