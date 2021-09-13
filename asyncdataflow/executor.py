@@ -22,18 +22,12 @@ class AsyncDataFlow(DataFlowExecutor):
                 kwargs = await self._run_concurrent(task, **kwargs)
             elif isinstance(task, Callable):
                 kw = self._map_kwargs(task, kwargs)
-                print('- input ---------------------------------------------------------------------')
-                print(inspect.isfunction(task))
-                print(inspect.iscoroutinefunction(task))
-                print(f'{task} {kw}')
                 if kw:
                     if inspect.iscoroutinefunction(task):
                         kwargs = await task(**kw)
                     else:          
                         args = self._map_kwargs_to_args(task, kw)
                         kwargs = await loop.run_in_executor(None, task, *args)
-                print('- output --------------------------------------------------------------------')
-                print(kwargs)
         return kwargs        
 
     async def _run_concurrent(self, dataflow: tuple, **kwargs):
@@ -66,8 +60,6 @@ class AsyncDataFlow(DataFlowExecutor):
     @staticmethod
     def _map_kwargs (func: Callable, kwargs) -> dict:
         f_args = inspect.getfullargspec(func).args
-        print('------------------------------')
-        print(f_args)
         try:
             result = {k: kwargs[k] for k in f_args}
         except KeyError:
