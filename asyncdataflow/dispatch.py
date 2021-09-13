@@ -2,7 +2,7 @@ from functools import wraps
 import asyncio
 import inspect
 
-from .exceptions import DataFlowException
+from .exceptions import DispatchError
 
 
 def sdispatch(fn):
@@ -19,7 +19,7 @@ def sdispatch(fn):
     @wraps(fn)
     def wrapper(_dispatch_key):
         if _dispatch_key not in registry:
-            raise DataFlowException
+            raise DispatchError(_dispatch_key)
         return registry[_dispatch_key]
 
     wrapper.register = register
@@ -42,7 +42,7 @@ def ddispatch(fn):
     @wraps(fn)
     async def wrapper(*args, _dispatch_key, **kwargs):
         if _dispatch_key not in registry:
-            raise DataFlowException
+            raise DispatchError(_dispatch_key)
         fn = registry[_dispatch_key]
         if inspect.iscoroutinefunction(fn):
             result = await fn(*args, **kwargs)
