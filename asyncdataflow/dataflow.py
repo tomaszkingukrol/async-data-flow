@@ -27,7 +27,7 @@ args_publish: str (default 'None') - Initial arguments re passed only to first f
         self.executor = executor
         self.inspector = inspector
         self.is_permanent = is_permanent
-        # self.inspector.check_dataflow_args(self.dataflow) 
+        self.inspector.check_dataflow_args(self.dataflow) 
         
     async def __call__(self, **kwargs):
         while True:

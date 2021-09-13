@@ -8,6 +8,8 @@ _ARGS_MAPPER_INPUT_KEY_ERROR = 'Key {2} is not passed as arguments {1} to {0}.'
 _ARGS_MAPPER_OUTPUT_KEY_ERROR = 'Key {2} is not in returned dictionary {1} from {0}.'
 _ARGS_MAPPER_ARGS_ERROR = 'Wrong arguments {1} passed to {0}.'
 
+_DISPATCH_ERROR = 'Dispatched function {1} not exists'
+
 
 class DataFlowException(Exception):
     '''Basic exception for asyncdataflow module.
@@ -95,9 +97,14 @@ class ArgsMapperOutputKeyError(ArgsMapperError):
 
 
 class ArgsMapperArgsError(ArgsMapperError):
-    ''' Raised when passed arguments to functions do not fit to origin arguments.
+    '''Raised when passed arguments to functions do not fit to origin arguments.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_ARGS_MAPPER_ARGS_ERROR)
 
 
+class DispatchError(DataFlowException):
+    '''Raised when dispatched function didn't be registered
+    '''
+    def __init__(self, *args):
+        super(__class__, self).__init__(*args, error_string=_ARGS_MAPPER_INPUT_KEY_ERROR)
