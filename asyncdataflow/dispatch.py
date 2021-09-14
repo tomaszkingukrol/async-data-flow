@@ -6,7 +6,7 @@ from .exceptions import DispatchError
 
 
 def sdispatch(fn):
-    '''Can dispatch function in DataFlow definiotion step.
+    '''Dispatch function in step of DataFlow definiotion. Function return previously registered function.
     '''
     registry = dict()
     registry[''] = fn
@@ -29,7 +29,7 @@ def sdispatch(fn):
 
 
 def ddispatch(fn):
-    '''Can dispatch function in running DataFlow.
+    '''Dispatch function in running DataFlow. Function run previously registered function.
     '''
     registry = dict()
     registry[''] = fn
