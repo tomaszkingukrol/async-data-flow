@@ -1,6 +1,5 @@
 import pytest
 from asyncdataflow import DataFlow, sdispatch
-from asyncdataflow.exceptions import DataFlowException
 
 @sdispatch
 def foo(_dispatch_key):

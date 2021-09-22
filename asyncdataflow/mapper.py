@@ -30,7 +30,7 @@ def _output_mapper(func_name: str, output: dict or tuple or object, result: dict
     return res
 
 
-def args_mapper(func, input: dict = None, output: dict = None):
+def amapper(func, input: dict = None, output: dict = None):
     input, output = input, output
     @wraps(func)
     def wrapper(**kwargs):

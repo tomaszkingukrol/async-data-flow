@@ -9,6 +9,9 @@ def foo(a):
 def bar(a):
     return {'a': a}
 
+def bar2(a):
+    return {'a': a*2}
+
 def baz(a):
     return {'b': a}
 
@@ -31,7 +34,7 @@ async def test_correct_run_threads(dataflow, input, output):
 
 
 INCORRECT_CONFIG= [
-    ((foo, (bar, bar)), {'a': 1}, {'a': 1}),
+    ((foo, (bar, bar2)), {'a': 1}, {'a': 1}),
 ]
 
 @pytest.mark.asyncio

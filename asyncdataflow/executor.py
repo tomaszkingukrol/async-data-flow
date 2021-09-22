@@ -11,13 +11,31 @@ class AsyncDataFlow(DataFlowExecutor):
     ''' Define executor of coroutine functions and sync function in async-data-flow
     '''
 
+    def __init__(self, args_visibility):
+        self._add_initial_args = False
+        self._add_args = False
+        self._init_args = dict()
+        if args_visibility == 'Initial':
+            self._add_initial_args = True
+        elif args_visibility == 'All':
+            self._add_args = True
+
     async def run(self, dataflow: tuple, **kwargs):
+        ''' Run Data Flow
+        '''
+        if self._add_initial_args:
+            self._init_args = kwargs
         return await self._run_sequence(dataflow, **kwargs)
     
     async def _run_sequence(self, dataflow: tuple, **kwargs):
+        ''' Run function in Data Flow sequentially
+        '''
         loop = asyncio.get_event_loop()
-
         for task in dataflow:
+            _input_args = dict()
+            if self._add_args:
+                _input_args = kwargs
+                
             if isinstance(task, tuple):
                 kwargs = await self._run_concurrent(task, **kwargs)
             elif isinstance(task, Callable):
@@ -28,12 +46,20 @@ class AsyncDataFlow(DataFlowExecutor):
                     else:          
                         args = self._map_kwargs_to_args(task, kw)
                         kwargs = await loop.run_in_executor(None, task, *args)
-        return kwargs        
+
+            self._merge_kwargs(kwargs, self._init_args, _input_args)
+
+        return kwargs   
 
     async def _run_concurrent(self, dataflow: tuple, **kwargs):
+        ''' Run function in Data Flow concurrently
+        '''
+        _input_args = dict()
+        if self._add_args:
+            _input_args = kwargs
+
         loop = asyncio.get_event_loop()
         tasks = list()
-
         for task in dataflow:
             if isinstance(task, tuple):
                 kwargs = await self._run_sequence(task, **kwargs)
@@ -50,15 +76,31 @@ class AsyncDataFlow(DataFlowExecutor):
             kwargs = dict()
             for task in tasks:
                 kw = await task
-                if kw:
-                    if set(kwargs.keys()).intersection(kw.keys()):
-                        raise DataFlowMergeResultError(kw.keys(), kwargs.keys())
-                    kwargs.update(kw)
+                self._merge_kwargs(kwargs, kw)
+
+        self._merge_kwargs(kwargs, self._init_args, _input_args)
 
         return kwargs
 
     @staticmethod
-    def _map_kwargs (func: Callable, kwargs) -> dict:
+    def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
+        ''' Merge two dictionaries. Raise error where keys are the same in both dictionaries and values are different
+        '''
+        for dict_ in to_add:
+            if dict_:
+                intersection_ = set(origin.keys()).intersection(dict_.keys())
+                if intersection_:
+                    a = {k: v for k, v in origin.items() if k in intersection_}
+                    b = {k: v for k, v in dict_.items() if k in intersection_}
+                    if a != b:
+                        raise DataFlowMergeResultError(dict_.keys(), origin.keys())
+                origin.update(dict_)  
+        return origin      
+
+    @staticmethod
+    def _map_kwargs(func: Callable, kwargs) -> dict:
+        ''' Map dictioanry to argumetns od called function
+        '''
         f_args = inspect.getfullargspec(func).args
         try:
             result = {k: kwargs[k] for k in f_args}
@@ -68,6 +110,8 @@ class AsyncDataFlow(DataFlowExecutor):
             
     @staticmethod
     def _map_kwargs_to_args(func: Callable, kwargs) -> list:
+        ''' Map kwargs (dictionary) to list in order defined by functions arguments
+        '''
         f_args = inspect.getfullargspec(func).args
         return [x[1] for x in sorted(kwargs.items(), key=lambda x:f_args.index(x[0]))]  
 

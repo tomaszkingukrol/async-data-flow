@@ -1,5 +1,5 @@
 import pytest
-from asyncdataflow import args_mapper
+from asyncdataflow import amapper
 from asyncdataflow.exceptions import ArgsMapperError
 
 
@@ -21,7 +21,7 @@ CORRECT_INPUT_MAPPING= [
 
 @pytest.mark.parametrize("func, input, input_map", CORRECT_INPUT_MAPPING)
 def test_correct_input_mapping(func, input, input_map):
-    f = args_mapper(func=func, input=input_map)
+    f = amapper(func=func, input=input_map)
     try:
         f(**input)
     except:
@@ -38,7 +38,7 @@ INCORRECT_INPUT_MAPPING= [
 
 @pytest.mark.parametrize("func, input, input_map", INCORRECT_INPUT_MAPPING)
 def test_incorrect_input_mapping(func, input, input_map):
-    f = args_mapper(func=func, input=input_map)
+    f = amapper(func=func, input=input_map)
     with pytest.raises(ArgsMapperError):
         f(**input)
 
@@ -68,7 +68,7 @@ CORRECT_ZERO_OUTPUT_MAPPING= [
                          CORRECT_PARTIAL_OUTPUT_MAPPING + 
                          CORRECT_ZERO_OUTPUT_MAPPING)
 def test_correct_output_mapping(func, input, output, output_map):
-    f = args_mapper(func=func, output=output_map)
+    f = amapper(func=func, output=output_map)
     res = f(**input)
     assert res == output
 
@@ -80,7 +80,7 @@ INCORRECT_OUTPUT_MAPPING= [
 
 @pytest.mark.parametrize("func, input, output, output_map", INCORRECT_OUTPUT_MAPPING)
 def test_incorrect_output_mapping(func, input, output, output_map):
-    f = args_mapper(func=func, output=output_map)
+    f = amapper(func=func, output=output_map)
     with pytest.raises(ArgsMapperError):
         f(**input)
 
@@ -97,7 +97,7 @@ INCORRECT_ARGS_MAPPING= [
 
 @pytest.mark.parametrize("func, input, input_map", INCORRECT_ARGS_MAPPING)
 def test_incorrect_args_mapping(func, input, input_map):
-    f = args_mapper(func=func, input=input_map)
+    f = amapper(func=func, input=input_map)
     with pytest.raises(ArgsMapperError):
         f(**input)
 

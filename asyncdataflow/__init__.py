@@ -1,5 +1,5 @@
 from .dataflow import DataFlow
-from .args_mapper import args_mapper
+from .mapper import amapper
 from .dispatch import sdispatch, ddispatch
 
 
