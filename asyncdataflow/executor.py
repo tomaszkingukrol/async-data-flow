@@ -86,14 +86,17 @@ class AsyncDataFlow(DataFlowExecutor):
 def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
     ''' Merge two dictionaries. Raise error where keys are the same in both dictionaries and values are different
     '''
+    if not origin:
+        origin = dict()
     for dict_ in to_add:
         if dict_:
-            intersection_ = set(origin.keys()).intersection(dict_.keys())
-            if intersection_:
-                a = {k: v for k, v in origin.items() if k in intersection_}
-                b = {k: v for k, v in dict_.items() if k in intersection_}
-                if a != b:
-                    raise DataFlowMergeResultError(dict_.keys(), origin.keys())
+            if origin:
+                intersection_ = set(origin.keys()).intersection(dict_.keys())
+                if intersection_:
+                    a = {k: v for k, v in origin.items() if k in intersection_}
+                    b = {k: v for k, v in dict_.items() if k in intersection_}
+                    if a != b:
+                        raise DataFlowMergeResultError(dict_.keys(), origin.keys())
             origin.update(dict_)  
     return origin      
 
