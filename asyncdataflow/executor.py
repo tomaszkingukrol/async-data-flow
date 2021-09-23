@@ -35,19 +35,19 @@ class AsyncDataFlow(DataFlowExecutor):
             _input_args = dict()
             if self._add_args:
                 _input_args = kwargs
-                
+
             if isinstance(task, tuple):
                 kwargs = await self._run_concurrent(task, **kwargs)
             elif isinstance(task, Callable):
-                kw = self._map_kwargs(task, kwargs)
+                kw = _map_kwargs(task, kwargs)
                 if kw:
                     if inspect.iscoroutinefunction(task):
                         kwargs = await task(**kw)
                     else:          
-                        args = self._map_kwargs_to_args(task, kw)
+                        args = _map_kwargs_to_args(task, kw)
                         kwargs = await loop.run_in_executor(None, task, *args)
 
-            self._merge_kwargs(kwargs, self._init_args, _input_args)
+            _merge_kwargs(kwargs, self._init_args, _input_args)
 
         return kwargs   
 
@@ -64,56 +64,56 @@ class AsyncDataFlow(DataFlowExecutor):
             if isinstance(task, tuple):
                 kwargs = await self._run_sequence(task, **kwargs)
             elif isinstance(task, Callable):
-                kw = self._map_kwargs(task, kwargs)
+                kw = _map_kwargs(task, kwargs)
                 if kw:
                     if inspect.iscoroutinefunction(task):
                         tasks.append(loop.create_task(task(**kw)))
                     else:          
-                        args = self._map_kwargs_to_args(task, kw)
+                        args = _map_kwargs_to_args(task, kw)
                         tasks.append(loop.run_in_executor(None, task, *args))
 
         if tasks:
             kwargs = dict()
             for task in tasks:
                 kw = await task
-                self._merge_kwargs(kwargs, kw)
+                _merge_kwargs(kwargs, kw)
 
-        self._merge_kwargs(kwargs, self._init_args, _input_args)
+        _merge_kwargs(kwargs, self._init_args, _input_args)
 
         return kwargs
 
-    @staticmethod
-    def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
-        ''' Merge two dictionaries. Raise error where keys are the same in both dictionaries and values are different
-        '''
-        for dict_ in to_add:
-            if dict_:
-                intersection_ = set(origin.keys()).intersection(dict_.keys())
-                if intersection_:
-                    a = {k: v for k, v in origin.items() if k in intersection_}
-                    b = {k: v for k, v in dict_.items() if k in intersection_}
-                    if a != b:
-                        raise DataFlowMergeResultError(dict_.keys(), origin.keys())
-                origin.update(dict_)  
-        return origin      
 
-    @staticmethod
-    def _map_kwargs(func: Callable, kwargs) -> dict:
-        ''' Map dictioanry to argumetns od called function
-        '''
-        f_args = inspect.getfullargspec(func).args
-        try:
-            result = {k: kwargs[k] for k in f_args}
-        except KeyError:
-            result = None
-        return result
-            
-    @staticmethod
-    def _map_kwargs_to_args(func: Callable, kwargs) -> list:
-        ''' Map kwargs (dictionary) to list in order defined by functions arguments
-        '''
-        f_args = inspect.getfullargspec(func).args
-        return [x[1] for x in sorted(kwargs.items(), key=lambda x:f_args.index(x[0]))]  
+def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
+    ''' Merge two dictionaries. Raise error where keys are the same in both dictionaries and values are different
+    '''
+    for dict_ in to_add:
+        if dict_:
+            intersection_ = set(origin.keys()).intersection(dict_.keys())
+            if intersection_:
+                a = {k: v for k, v in origin.items() if k in intersection_}
+                b = {k: v for k, v in dict_.items() if k in intersection_}
+                if a != b:
+                    raise DataFlowMergeResultError(dict_.keys(), origin.keys())
+            origin.update(dict_)  
+    return origin      
+
+
+def _map_kwargs(func: Callable, kwargs) -> dict:
+    ''' Map dictioanry to argumetns od called function
+    '''
+    f_args = inspect.getfullargspec(func).args
+    try:
+        result = {k: kwargs[k] for k in f_args}
+    except KeyError:
+        result = None
+    return result
+        
+
+def _map_kwargs_to_args(func: Callable, kwargs) -> list:
+    ''' Map kwargs (dictionary) to list in order defined by functions arguments
+    '''
+    f_args = inspect.getfullargspec(func).args
+    return [x[1] for x in sorted(kwargs.items(), key=lambda x:f_args.index(x[0]))]  
 
 
 
