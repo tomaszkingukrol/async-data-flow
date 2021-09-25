@@ -5,8 +5,18 @@ import inspect
 from .exceptions import DispatchError
 
 
-def sdispatch(fn):
-    '''Dispatch function in step of DataFlow definiotion. Function return previously registered function.
+def fdispatch(fn):
+    '''A function factory decorator. Any coroutine function and sync function can be registered and dispatched 
+    using first positional argument.
+
+    Usage:
+        @fdispatch
+        def foo(key): ...
+
+        @foo.register('a')
+        async def _a(): ...
+
+        df = DataFlow((foo('a'),))
     '''
     registry = dict()
     registry[''] = fn
@@ -22,35 +32,6 @@ def sdispatch(fn):
             raise DispatchError(_dispatch_key)
         return registry[_dispatch_key]
 
-    wrapper.register = register
-    wrapper.registry = registry.keys()
-
-    return wrapper
-
-
-def ddispatch(fn):
-    '''Dispatch function in running DataFlow. Function run previously registered function.
-    '''
-    registry = dict()
-    registry[''] = fn
-    
-    def register(key_):
-        def inner(fn):
-            registry[key_] = fn
-        return inner
-   
-    @wraps(fn)
-    async def wrapper(*args, _dispatch_key, **kwargs):
-        if _dispatch_key not in registry:
-            raise DispatchError(_dispatch_key)
-        fn = registry[_dispatch_key]
-        if inspect.iscoroutinefunction(fn):
-            result = await fn(*args, **kwargs)
-        else:
-            loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, fn, *args)
-        return result
-    
     wrapper.register = register
     wrapper.registry = registry.keys()
 

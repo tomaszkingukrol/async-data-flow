@@ -1,7 +1,7 @@
 import pytest
-from asyncdataflow import DataFlow, sdispatch
+from asyncdataflow import DataFlow, fdispatch
 
-@sdispatch
+@fdispatch
 def foo(_dispatch_key):
     pass
 

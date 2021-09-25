@@ -34,7 +34,7 @@ class DataFlowRunItemError(DataFlowError):
 
 
 class DataFlowMergeResultError(DataFlowRunItemError):
-    '''Raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions.
+    '''Raised when returned dictionary from function shoudn't be merged with previous returned dictionary by other functions in DataFlow.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_MERGE_ERROR) 
@@ -69,14 +69,14 @@ class DataFlowNotTupleError(DataFlowDefinitionError):
 
 
 class DataFlowEmptyError(DataFlowDefinitionError):
-    '''Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty.
+    '''Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow cannot be empty.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_EMPTY_ERROR) 
 
 
 class ArgsMapperError(DataFlowException):
-    '''Basic exception for any errors returned by args_mapper.
+    '''Basic exception for any errors returned by amapper (argument mapper).
     '''
     def __init__(self, *args, error_string: str):
         super(__class__, self).__init__(*args, error_string=error_string)

@@ -36,24 +36,22 @@ We pass initial arguments to DataFlow when we call DataFlow class object. We mus
     
 Initial arguments are passed to the first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to the next element in DataFlow. Next element checks if it can pass arguments to its own function, if yes, it executes this function, if not, it passes arguments to the next element. This process continues until the end of DataFlow package. The package returns the dictionary from the last executed function.
 
-### args_mapper
+### amapper
 
-We can use in DataFlow functions which return other values than the dictionary. We can transform passed arguments and returned values using args_mapper:
+We can use in DataFlow functions which return other values than the dictionary. We can transform passed arguments and returned values using amapper:
 
-    from asyncdataflow import args_mapper
+    from asyncdataflow import amapper
 
     async def foo(a):
-        ...
         return data
 
-    bar = args_mapper(foo, input={'a': 'endpoint'}, output='data')  
+    bar = amapper(foo, input={'a': 'endpoint'}, output='data')  
 
     bar(endpoint=...) -> {'data': data}
 
 Python function can return multile outputs as tuple:
 
     async def foo(a):
-        ...
         return source, data
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output=('source', 'data'))  
@@ -63,7 +61,6 @@ Python function can return multile outputs as tuple:
 Sometimes we should map returned dictionary to another one:
 
     async def foo(a):
-        ...
         return {'source': source, 'data': data}
 
     bar = args_mapper(foo, input={'a': 'endpoint'}, output={'source': 'source_a', 'data': 'data_a'})  

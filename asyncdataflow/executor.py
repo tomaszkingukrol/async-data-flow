@@ -84,7 +84,7 @@ class AsyncDataFlow(DataFlowExecutor):
 
 
 def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
-    ''' Merge two dictionaries. Raise error where keys are the same in both dictionaries and values are different
+    ''' Merge collection of dictionaries. Raise error when keys are the same in both merged dictionaries but values are different
     '''
     if not origin:
         origin = dict()
@@ -102,7 +102,7 @@ def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
 
 
 def _map_kwargs(func: Callable, kwargs) -> dict:
-    ''' Map dictioanry to argumetns od called function
+    ''' Map dictioanry to argumetns of called function
     '''
     f_args = inspect.getfullargspec(func).args
     try:
