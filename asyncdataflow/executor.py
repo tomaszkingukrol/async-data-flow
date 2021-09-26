@@ -76,7 +76,9 @@ class AsyncDataFlow(DataFlowExecutor):
             kwargs = dict()
             for task in tasks:
                 kw = await task
+                print(kw)
                 _merge_kwargs(kwargs, kw)
+                print(kwargs)
 
         _merge_kwargs(kwargs, self._init_args, _input_args)
 
@@ -86,7 +88,7 @@ class AsyncDataFlow(DataFlowExecutor):
 def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
     ''' Merge collection of dictionaries. Raise error when keys are the same in both merged dictionaries but values are different
     '''
-    if not origin:
+    if not isinstance(origin, dict):
         origin = dict()
     for dict_ in to_add:
         if dict_:
