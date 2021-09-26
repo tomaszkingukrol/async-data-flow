@@ -2,11 +2,8 @@ import pytest
 from asyncdataflow import DataFlow
 
 
-def foo():
-    pass
-
-async def bar():
-    pass
+def foo(): pass
+async def bar(): pass
 
 
 CORRECT_FUNCTION = [

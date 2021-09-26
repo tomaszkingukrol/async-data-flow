@@ -3,17 +3,10 @@ from asyncdataflow import DataFlow
 from asyncdataflow.exceptions import DataFlowMergeResultError
 
 
-async def foo(a):
-    return {'a': a}
-
-async def bar(a):
-    return {'a': a*2}
-
-async def fuu(a):
-    return {'b': a}
-
-async def baz(a, b):
-    return {'c': a+b}
+async def foo(a): return {'a': a}
+async def bar(a): return {'a': a*2}
+async def fuu(a): return {'b': a}
+async def baz(a, b): return {'c': a+b}
 
 
 CORRECT_CONFIG= [

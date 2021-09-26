@@ -3,8 +3,7 @@ from asyncdataflow import DataFlow
 from asyncdataflow.exceptions import DataFlowNotCallableError, DataFlowEmptyError, DataFlowNotTupleError
 
 
-def foo():
-    pass
+def foo(): pass
 
 
 CORRECT_DATAFLOW = [

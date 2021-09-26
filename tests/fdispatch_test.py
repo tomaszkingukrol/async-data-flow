@@ -2,16 +2,13 @@ import pytest
 from asyncdataflow import DataFlow, fdispatch
 
 @fdispatch
-def foo(_dispatch_key):
-    pass
+def foo(_dispatch_key): pass
 
 @foo.register('a')
-async def _1(a):
-    return {'a': a}
+async def _1(a): return {'a': a}
 
 @foo.register('b')
-async def _2(a):
-    return {'a': a}
+async def _2(a): return {'a': a}
 
 
 @pytest.mark.asyncio

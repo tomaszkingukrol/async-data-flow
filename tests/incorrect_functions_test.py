@@ -3,17 +3,10 @@ from asyncdataflow import DataFlow
 from asyncdataflow.exceptions import DataFlowFunctionArgsError
 
 
-def foo(*args):
-    pass
-
-def bar(*args, **kwargs):
-    pass
-
-def baz(**kwargs):
-    pass
-
-def bax(*, a, b):
-    pass
+def foo(*args): pass
+def bar(*args, **kwargs): pass
+def baz(**kwargs): pass
+def bax(*, a, b): pass
 
 
 INCORRECT_FUNCTION = [

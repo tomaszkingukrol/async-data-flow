@@ -3,14 +3,9 @@ from asyncdataflow import amapper
 from asyncdataflow.exceptions import ArgsMapperError
 
 
-def foo(a, b):
-    return a + b
-
-def bar(a, b):
-    return a, b
-
-def baz(a, b):
-    return {'a': a, 'b': b}
+def foo(a, b): return a + b
+def bar(a, b): return a, b
+def baz(a, b): return {'a': a, 'b': b}
 
 
 CORRECT_INPUT_MAPPING= [
@@ -100,5 +95,3 @@ def test_incorrect_args_mapping(func, input, input_map):
     f = amapper(func=func, input=input_map)
     with pytest.raises(ArgsMapperError):
         f(**input)
-
-
