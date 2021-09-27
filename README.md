@@ -147,6 +147,7 @@ DataFlow exception hierarchy:
         +-- DataFlowError:
             +-- DataFlowRunItemError:
                 +-- DataFlowMergeResultError:
+                +-- DataFlowFunctionResultError:
             +-- DataFlowDefinitionError:
                 +-- DataFlowFunctionArgsError:
                 +-- DataFlowNotCallableError:
@@ -158,6 +159,7 @@ DataFlow exception hierarchy:
                 +-- ArgsMapperArgsError:
         +-- DispatchError:
 - DataFlowMergeResultError: raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions
+- DataFlowFunctionResultError: Raised when function return other value that dictionary
 - DataFlowFunctionArgsError: raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments
 - DataFlowNotCallableError: raised when DataFlow contain not callable objects
 - DataFlowNotTupleError: raised when DataFlow is defined as other that tuple collection

@@ -4,7 +4,7 @@ import asyncio
 import inspect
 
 from .definition import DataFlowExecutor
-from .exceptions import DataFlowMergeResultError
+from .exceptions import DataFlowMergeResultError, DataFlowFunctionResultError
 
 
 class AsyncDataFlow(DataFlowExecutor):
@@ -47,7 +47,7 @@ class AsyncDataFlow(DataFlowExecutor):
                         args = _map_kwargs_to_args(task, kw)
                         kwargs = await loop.run_in_executor(None, task, *args)
 
-            _merge_kwargs(kwargs, self._init_args, _input_args)
+            kwargs = _merge_kwargs(task, kwargs, self._init_args, _input_args)
 
         return kwargs   
 
@@ -77,19 +77,19 @@ class AsyncDataFlow(DataFlowExecutor):
             for task in tasks:
                 kw = await task
                 print(kw)
-                _merge_kwargs(kwargs, kw)
+                _merge_kwargs(task, kwargs, kw)
                 print(kwargs)
 
-        _merge_kwargs(kwargs, self._init_args, _input_args)
-
-        return kwargs
+        return _merge_kwargs(None, kwargs, self._init_args, _input_args)
 
 
-def _merge_kwargs(origin: dict, *to_add: dict) -> dict:
+def _merge_kwargs(task, origin: dict, *to_add: dict) -> dict:
     ''' Merge collection of dictionaries. Raise error when keys are the same in both merged dictionaries but values are different
     '''
-    if not isinstance(origin, dict):
+    if not origin and not isinstance(origin, dict):
         origin = dict()
+    elif not isinstance(origin, dict):
+        raise DataFlowFunctionResultError(task.__name__ if task else None)
     for dict_ in to_add:
         if dict_:
             if origin:
