@@ -67,19 +67,6 @@ Sometimes we should map returned dictionary to another one:
 
     bar(endpoint=...) -> {'source'_a: source, 'data_a': data}
 
-### passing extra parameters
-
-If we need to pass extra parameters to not the first function in DataFlow, we must do that before DataFlow is defined. We can use partial function from the functools module:
-
-    from functools import partial
-
-    async def foo(endpoint, data):
-        ...
-
-    bar = partial(foo, endpoint = ...)
-
-and in example above configure DataFlow using bar function instead of foo function. 
-
 ## More complex use cases
 
 We can configure more complex DataFlow package. DataFlow is defined as a tuple which contains pipe of functions executed sequentially (one by one). We can add nested tuple inside which functions will be executed concurrently:
@@ -156,60 +143,60 @@ For example:
 
 DataFlow exception hierarchy:
 
-    +-- DataFlowException:
-         +-- DataFlowError:
-              +-- DataFlowDefinitionError:
-                   +-- DataFlowNotTupleError
-                   +-- DataFlowFunctionArgsError
-                   +-- DataFlowNotCallableError
-                   +-- DataFlowEmptyError
-              +-- DataFlowRuntimeError:
-                   +-- DataFlowMergeResultError  
-         +-- ArgsMapperError:
-              +-- ArgsMapperInputKeyError
-              +-- ArgsMapperOutputKeyError
-              +-- ArgsMapperArgsError
-
-- DataFlowNotTupleError: raised when DataFlow is defined as other that tuple collection
+    +-- DataFlowException(Exception):
+        +-- DataFlowError:
+            +-- DataFlowRunItemError:
+                +-- DataFlowMergeResultError:
+            +-- DataFlowDefinitionError:
+                +-- DataFlowFunctionArgsError:
+                +-- DataFlowNotCallableError:
+                +-- DataFlowNotTupleError:
+                +-- DataFlowEmptyError:
+            +-- ArgsMapperError:
+                +-- ArgsMapperInputKeyError:
+                +-- ArgsMapperOutputKeyError:
+                +-- ArgsMapperArgsError:
+        +-- DispatchError:
+- DataFlowMergeResultError: raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions
 - DataFlowFunctionArgsError: raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments
 - DataFlowNotCallableError: raised when DataFlow contain not callable objects
+- DataFlowNotTupleError: raised when DataFlow is defined as other that tuple collection
 - DataFlowEmptyError: Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty
-- DataFlowMergeResultError: raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions
 - ArgsMapperInputKeyError: Raised when mapping defined in input argument do not correspond to initial function arguments
 - ArgsMapperOutputKeyError: Raised when mapping defined in output argument do not correspond to returned from function dictionary
 - ArgsMapperArgsError: Raised when passed arguments to functions do not fit to origin arguments
-
-### Examples for error handling from DataFlow definition:
-
-
+- DispatchError: Raised when dispatched function didn't be registered
 
 ### Examples for error handling from DataFlow runtime:
 
 
+### Examples for error handling from DataFlow definition:
 
-### Examples for error handling from args_mapper functions:
 
-    from asyncdataflow import args_mapper
+### Examples for error handling from amapper decorator:
+
+    from asyncdataflow import amapper
     from asyncdataflow.exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
 
     def foo(a, b):
         return {'a': a, 'b': b}
 
-    bar = args_mapper(func=foo, input={'a': 'd'})
+    bar = amapper(func=foo, input={'a': 'd'})
     try:
         bar(c=1, b=2)
     except ArgsMapperInputKeyError as e:
-        print(e)
+        ...
 
-    bar = args_mapper(func=foo, output={'a': 'd'})
+    bar = amapper(func=foo, output={'a': 'd'})
     try:
         bar(a=1, b=2)
     except ArgsMapperOutputKeyError as e:
-        print(e)
+        ...
 
-    bar = args_mapper(func=foo, input={'c': 'd'})
+    bar = amapper(func=foo, input={'c': 'd'})
     try:
         bar(d=1, b=2)
     except ArgsMapperArgsError as e:
-        print(e)   
+        ...  
 
+### Examples for error handling from fdispatch decorator:

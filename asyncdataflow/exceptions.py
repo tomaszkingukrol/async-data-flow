@@ -107,4 +107,4 @@ class DispatchError(DataFlowException):
     '''Raised when dispatched function didn't be registered
     '''
     def __init__(self, *args):
-        super(__class__, self).__init__(*args, error_string=_ARGS_MAPPER_INPUT_KEY_ERROR)
+        super(__class__, self).__init__(*args, error_string=_DISPATCH_ERROR)
