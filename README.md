@@ -26,6 +26,7 @@ During defining DataFlow object we can specify argumets visibility (args_visibil
 - 'Initial': initial arguments are visible by all function in Data Flow, returned values are visible only by next functions in Data Flow
 - 'All': initial arguments and returned values are visible by all next functions in Data Flow
 
+Example:
 
     import asyncio
     from asyncdataflow import DataFlow
