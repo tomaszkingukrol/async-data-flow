@@ -1,5 +1,5 @@
 # async-data-flow
-Module allow bundle coroutine functions and synchronous functions into package inside which functions are executed sequentially. DataFlow package is executed as coroutine. Synchronous function inside pckage are executed in separated threads. Functions inside package must use only keyword arguments (technically POSITIONAL_OR_KEYWORD arguments) and must return dictionary which can be unpacked and passed to next fuction in package as the arguments. 
+Module allow to bundle coroutine functions and synchronous functions into single package inside which functions are executed sequentially (one-by-one). DataFlow package is executed as coroutine. Synchronous function inside package are executed in separated threads. Functions inside package must use only keyword arguments (technically POSITIONAL_OR_KEYWORD arguments) and must return dictionary which can be unpacked and passed to next fuction in package as the arguments. 
 Module depends on asyncio module. 
 
     import asyncio
@@ -17,7 +17,7 @@ Module depends on asyncio module.
 
     asyncio.run(main())
 
-DataFlow package is defined as tuple (foo, bar) during DataFlow class instantiation. Initial argumets are passed to DataFlow package during calling DataFlow class instance. Dictioanry returned by first function is unpacked and passed as argumetns to next function. Package return dictionary returned by last function.
+DataFlow package is defined as tuple (foo, bar) during DataFlow class instantiation. Initial argumets are passed to DataFlow package during calling DataFlow class instance. Dictionary returned by first function is unpacked and passed as argumetns to next function. Package return dictionary which was returned by last function.
 
 ### argument visibility
 
@@ -45,7 +45,7 @@ Example:
 
 ### amapper
 
-When we want to use in DataFlow package function which do not return dictionary or we want to map keyword arguments to another key we can use amapper decorator:
+To use in DataFlow package function which do not return dictionary or we want to map keyword arguments to another key we can use amapper decorator:
 
     from asyncdataflow import amapper
 
@@ -66,7 +66,7 @@ When we want to use in DataFlow package function which do not return dictionary 
 
 ### fdispatch
 
-When we want to dispatch function in DataFlow packare we can use fdispatch decorator:
+To dispatch function in DataFlow packare we can use fdispatch decorator:
 
     import asyncio
     from asyncdataflow import DataFlow, fdispatch
@@ -100,7 +100,7 @@ DataFlow package is defined as a tuple inside which functions are executed seque
 
     dataflow = DataFlow(((foo, bar), merge))
 
-foo and bar functions are executed concurrently, returned dictionary by them are merged to one. When we add next nested tuple, inside them function will be executed sequencially, and so on.
+foo and bar functions are executed concurrently, returned dictionary by them are merged to one. When we add next nested tuple, inside them - function will be executed sequencially, and so on.
 
 ## Error handling
 
@@ -124,13 +124,13 @@ DataFlow exception hierarchy:
 
 Desciption:
 - DataFlowMergeResultError: raised when returned dictionaries cannot be merged 
-- DataFlowFunctionResultError: raised when function return other value that dictionary
-- DataFlowFunctionArgsError: raised when function has another arguments that POSITIONAL_OR_KEYWORD arguments
+- DataFlowFunctionResultError: raised when function return other value than dictionary
+- DataFlowFunctionArgsError: raised when function has another arguments than POSITIONAL_OR_KEYWORD arguments
 - DataFlowNotCallableError: raised when DataFlow contain not callable objects
 - DataFlowNotTupleError: raised when DataFlow is defined not as tuple
 - DataFlowEmptyError: raised when DataFlow or sub-DataFlow is empty
 - ArgsMapperInputKeyError: raised when mapping defined in input argument do not correspond to initial function arguments
 - ArgsMapperOutputKeyError: raised when mapping defined in output argument do not correspond to returned from function dictionary
 - ArgsMapperArgsError: raised when passed arguments to functions do not corespond to origin arguments
-- DispatchError: raised when dispatched function didn't be registered
+- DispatchError: raised when dispatched function wasn't registered
 
