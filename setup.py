@@ -13,7 +13,12 @@ setup(
     version="0.0.1",
     description="Asynchronous data flow",
     long_description=long_description,
-    url="https://github.com/tomaszkingukrol/async-data-flow",
+    author='Tomasz Król',
+    author_email='tomasz.kingu.krol@gmail.com',
+    maintainer='Tomasz Król',
+    maintainer_email='tomasz.kingu.krol@gmail.com',
+    url='https://github.com/tomaszkingukrol/async-data-flow',
+    download_url='https://github.com/tomaszkingukrol/async-data-flow/archive/refs/tags/0.0.1.tar.gz',
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
