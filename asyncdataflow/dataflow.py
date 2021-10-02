@@ -25,7 +25,7 @@ class DataFlow:
                             by next functions in Data Flow
                 'Initial' - initial arguments are visible by all function in Data Flow, returned values are visible only
                             by next functions in Data Flow
-                'All'     - alll arguments and returned values are visible by all functions in Data Flow
+                'All'     - initial arguments and returned values are visible by all next functions in Data Flow
         '''
         self.dataflow = dataflow
         self.run_forever = run_forever

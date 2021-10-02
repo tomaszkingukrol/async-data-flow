@@ -1,143 +1,104 @@
 # async-data-flow
-Bundle coroutines into package which can be executed as a single coroutine. In the package, coroutines can be executed sequentially or concurrently. Module depends on asyncio and can co-operate with many async libraries as aiohttp, aiomysql and others. If some process cannot be implemented asynchronously, the module supports the execution of synchronous functions as separated threads. 
-
-## Introduction
-Simple data flow process could be composed from two elements: get data and write data. Both can be implemented as async functions but must be executed sequentially:
+Module allow bundle coroutine functions and synchronous functions into package inside which functions are executed sequentially. DataFlow package is executed as coroutine. Synchronous function inside pckage are executed in separated threads. Functions inside package must use only keyword arguments (technically POSITIONAL_OR_KEYWORD arguments) and must return dictionary which can be unpacked and passed to next fuction in package as the arguments. 
+Module depends on asyncio module. 
 
     import asyncio
     from asyncdataflow import DataFlow
 
-    async def source(endpoint):
-        ...
-        return {'source': endpoint, 'data': [1,2,3,4,5,6]}
+    async def foo(a, b):
+        return {'c': a, 'd': b}
 
-    async def destination(source, data):
-        ...
-        return {'status': 0}
+    async def bar(c, d):
+        return {'e': c+d}
 
     async def main():
-        dataflow_definition = (source, destination)
-        dataflow = DataFlow(dataflow_definition)
-        result = await dataflow(endpoint=endpoint)
+        dataflow = DataFlow((foo, bar))
+        result = await dataflow(a=1, b=1)
 
     asyncio.run(main())
 
-In this example, we call single package grabbing data from source and put them to destination. Of course we can execute many of these packages using asyncio.create_task() function.
+DataFlow package is defined as tuple (foo, bar) during DataFlow class instantiation. Initial argumets are passed to DataFlow package during calling DataFlow class instance. Dictioanry returned by first function is unpacked and passed as argumetns to next function. Package return dictionary returned by last function.
 
-### passing arguments and retrieving results in DataFlow
+### argument visibility
 
-DataFlow class is Callable. When we create them we define elements of DataFlow as a tuple containing functions:
+During defining DataFlow object we can specify argumets visibility (args_visibility: str): 
+- 'None': initial arguments are visible only by first function in Data Flow, returned values are visible only by next functions in Data Flow
+- 'Initial': initial arguments are visible by all function in Data Flow, returned values are visible only by next functions in Data Flow
+- 'All': initial arguments and returned values are visible by all next functions in Data Flow
+        
+    import asyncio
+    from asyncdataflow import DataFlow
 
-    (source, destination)
+    async def foo(a):
+        return {'c': a}
 
-We pass initial arguments to DataFlow when we call DataFlow class object. We must use only keyword arguments:
+    async def bar(b, c):
+        return {'e': b+c}
 
-    await dataflow(endpoint=endpoint) 
-    
-Initial arguments are passed to the first element in DataFlow. All functions used in DataFlow must use only POSITIONAL_OR_KEYWORD arguments. Returned values from functions must be a dictionary which is unpacked as keyword arguments passing to the next element in DataFlow. Next element checks if it can pass arguments to its own function, if yes, it executes this function, if not, it passes arguments to the next element. This process continues until the end of DataFlow package. The package returns the dictionary from the last executed function.
+    async def main():
+        dataflow = DataFlow((foo, bar), args_visibility = 'Initial')
+        result = await dataflow(a=1, b=1)
+
+    asyncio.run(main())
 
 ### amapper
 
-We can use in DataFlow functions which return other values than the dictionary. We can transform passed arguments and returned values using amapper:
+When we want to use in DataFlow package function which do not return dictionary or we want to map keyword arguments to another key we can use amapper decorator:
 
     from asyncdataflow import amapper
 
     async def foo(a):
-        return data
+        return a
+    foo = amapper(foo, input={'a': 'in'}, output='out')  
+    foo(in=...) -> {'out': a}
 
-    bar = amapper(foo, input={'a': 'endpoint'}, output='data')  
+    async def bar(a):
+        return a, a*2
+    bar = args_mapper(bar, input={'a': 'in'}, output=('out1', 'out2'))  
+    bar(int=...) -> {'out1': a, 'out2': a*2}
 
-    bar(endpoint=...) -> {'data': data}
+    async def baz(a):
+        return {'o1': a, 'o2': a*2}
+    baz = args_mapper(baz, input={'a': 'in'}, output={'o1': 'out1', 'o2': 'out2'})  
+    baz(int=...) -> {'out1': a, 'out2': a*2}
 
-Python function can return multile outputs as tuple:
+### fdispatch
 
-    async def foo(a):
-        return source, data
-
-    bar = args_mapper(foo, input={'a': 'endpoint'}, output=('source', 'data'))  
-
-    bar(endpoint=...) -> {'source': source, 'data': data}
-
-Sometimes we should map returned dictionary to another one:
-
-    async def foo(a):
-        return {'source': source, 'data': data}
-
-    bar = args_mapper(foo, input={'a': 'endpoint'}, output={'source': 'source_a', 'data': 'data_a'})  
-
-    bar(endpoint=...) -> {'source'_a: source, 'data_a': data}
-
-## More complex use cases
-
-We can configure more complex DataFlow package. DataFlow is defined as a tuple which contains pipe of functions executed sequentially (one by one). We can add nested tuple inside which functions will be executed concurrently:
+When we want to dispatch function in DataFlow packare we can use fdispatch decorator:
 
     import asyncio
-    from functools import partial
-    from asyncdataflow import DataFlow, args_mapper
+    from asyncdataflow import DataFlow, fdispatch
 
-    async def source(endpoint, query):
-        ...
-        return {'data': [1,2,3,4,5,6]}
+    @fdispatch
+    def foo(key): pass
 
-    async def merge(data_a, data_b):
-        data = zip(data_a, data_b)
-        return {'data': data}
+    @foo.register('bar')
+    async def _(a): return {'b': a}
 
-    async def destination(endpoint, data):
-        ...
-        return {'status': 0}
+    @foo.register('baz')
+    async def _(b): return {'c': b}
 
-    source_a = args_mapper(partial(source, endpoint='endpoint_a'), output={'data': 'data_a'})  
-    source_b = args_mapper(partial(source, endpoint='endpoint_b'), output={'data': 'data_b'})  
-    dest = partial(destinatiom, endpoint='endpoint_c')
+    dataflow = DataFlow((foo('bar'),foo('baz')))
 
-    async def main():
-        dataflow_definition = ((source_a, source_b), merge, dest)
-        dataflow = DataFlow(dataflow_definition)
+## Concurrent execution inside DataFlow package
 
-        queries = [...]
-        tasks = list()
-        for query in queries:
-            task = asyncio.create_task(dataflow(query=query))
-            tasks.append(task)
+DataFlow package is defined as a tuple inside which functions are executed sequentially (one by one). We can add nested tuple inside which functions will be executed concurrently:
 
-        asyncio.gather(*tasks)
+    import asyncio
+    from asyncdataflow import DataFlow
 
-    asyncio.run(main())
+    async def foo(a):
+        return {'foo': a}
 
-In this example two source functions are executed concurrently, data returned from them are merged to one dictionary. Args_mapper is used to change returned value to different keys correspondig with arguments of next function merge. Partial function is used to pass endpoint parameter to source and destination functons.
+    async def bar(a):
+        return {'bar': a}
 
-DataFlow is defined by a tuple. The first tuple defines sequential execution, nested tuples define concurrent execution, but next nested tuples define again sequential execution, next concurrent, next sequential, and so on:
+    async def merge(foo, bar):
+        return {'merged': foo+bar}
 
-    (sequentional: 
-        (concurrent: 
-            (sequentional: A, B), 
-            (sequentional: C, D)
-        ), 
-        (concurrent: 
-            (sequentional: E, F), 
-            (sequentional: G, H)
-        )
-    )
+    dataflow = DataFlow(((foo, bar), merge))
 
-For example:
-
-    (sequentional: 
-        check_cache,
-        dispatch_request,
-        (concurrent: 
-            (sequentional: 
-                get_data_from_a,
-                transform_data_from_a
-            ), 
-            (sequentional: 
-                get_data_from_b,
-                transform_data_from_b
-            )
-        ), 
-        prepare_response,
-        save_to_cache
-    )
+foo and bar functions are executed concurrently, returned dictionary by them are merged to one. When we add next nested tuple, inside them function will be executed sequencially, and so on.
 
 ## Error handling
 
@@ -158,47 +119,16 @@ DataFlow exception hierarchy:
                 +-- ArgsMapperOutputKeyError:
                 +-- ArgsMapperArgsError:
         +-- DispatchError:
-- DataFlowMergeResultError: raised when returned dictionary from function shoudn't be merged with returned dictionary by other functions
-- DataFlowFunctionResultError: Raised when function return other value that dictionary
-- DataFlowFunctionArgsError: raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments
+
+Desciption:
+- DataFlowMergeResultError: raised when returned dictionaries cannot be merged 
+- DataFlowFunctionResultError: raised when function return other value that dictionary
+- DataFlowFunctionArgsError: raised when function has another arguments that POSITIONAL_OR_KEYWORD arguments
 - DataFlowNotCallableError: raised when DataFlow contain not callable objects
-- DataFlowNotTupleError: raised when DataFlow is defined as other that tuple collection
-- DataFlowEmptyError: Raised when DataFlow or sub-DataFlow is empty - tuple or nested tuple defined DataFlow is empty
-- ArgsMapperInputKeyError: Raised when mapping defined in input argument do not correspond to initial function arguments
-- ArgsMapperOutputKeyError: Raised when mapping defined in output argument do not correspond to returned from function dictionary
-- ArgsMapperArgsError: Raised when passed arguments to functions do not fit to origin arguments
-- DispatchError: Raised when dispatched function didn't be registered
+- DataFlowNotTupleError: raised when DataFlow is defined not as tuple
+- DataFlowEmptyError: raised when DataFlow or sub-DataFlow is empty
+- ArgsMapperInputKeyError: raised when mapping defined in input argument do not correspond to initial function arguments
+- ArgsMapperOutputKeyError: raised when mapping defined in output argument do not correspond to returned from function dictionary
+- ArgsMapperArgsError: raised when passed arguments to functions do not corespond to origin arguments
+- DispatchError: raised when dispatched function didn't be registered
 
-### Examples for error handling from DataFlow runtime:
-
-
-### Examples for error handling from DataFlow definition:
-
-
-### Examples for error handling from amapper decorator:
-
-    from asyncdataflow import amapper
-    from asyncdataflow.exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
-
-    def foo(a, b):
-        return {'a': a, 'b': b}
-
-    bar = amapper(func=foo, input={'a': 'd'})
-    try:
-        bar(c=1, b=2)
-    except ArgsMapperInputKeyError as e:
-        ...
-
-    bar = amapper(func=foo, output={'a': 'd'})
-    try:
-        bar(a=1, b=2)
-    except ArgsMapperOutputKeyError as e:
-        ...
-
-    bar = amapper(func=foo, input={'c': 'd'})
-    try:
-        bar(d=1, b=2)
-    except ArgsMapperArgsError as e:
-        ...  
-
-### Examples for error handling from fdispatch decorator:

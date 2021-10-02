@@ -36,7 +36,7 @@ class DataFlowRunItemError(DataFlowError):
 
 
 class DataFlowMergeResultError(DataFlowRunItemError):
-    '''Raised when returned dictionary from function shoudn't be merged with previous returned dictionary by other functions in DataFlow.
+    '''Raised when returned dictionaries cannot be merged.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_MERGE_ERROR) 
@@ -50,14 +50,14 @@ class DataFlowFunctionResultError(DataFlowRunItemError):
 
 
 class DataFlowDefinitionError(DataFlowError):
-    '''Basic exception for any errors when DataFlow is defined.
+    '''Basic exception for any errors during DataFlow definition.
     '''
     def __init__(self, *args, error_string: str):
         super(__class__, self).__init__(*args, error_string=error_string)      
 
 
 class DataFlowFunctionArgsError(DataFlowDefinitionError):
-    '''Raised when function used in DataFlow has another arguments that POSITIONAL_OR_KEYWORD arguments.
+    '''Raised when function has another arguments that POSITIONAL_OR_KEYWORD arguments.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_FUNCTION_ARGS_ERROR)      
@@ -71,7 +71,7 @@ class DataFlowNotCallableError(DataFlowDefinitionError):
 
 
 class DataFlowNotTupleError(DataFlowDefinitionError):
-    '''Raised when DataFlow is defined as other that tuple collection.
+    '''Raised when DataFlow is defined not as tuple.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_DATAFLOW_NOT_TUPLE_ERROR) 
@@ -106,7 +106,7 @@ class ArgsMapperOutputKeyError(ArgsMapperError):
 
 
 class ArgsMapperArgsError(ArgsMapperError):
-    '''Raised when passed arguments to functions do not fit to origin arguments.
+    '''Raised when passed arguments to functions do not corespond to origin arguments.
     '''
     def __init__(self, *args):
         super(__class__, self).__init__(*args, error_string=_ARGS_MAPPER_ARGS_ERROR)
