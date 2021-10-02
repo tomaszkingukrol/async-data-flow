@@ -1,11 +1,6 @@
 import sys
 from setuptools import setup
 
-setup(
-    name='asyncdataflow',
-    version='0.0.1',
-    packages=['asyncdataflow']
-)
 
 if sys.version_info < (3, 6, 0):
     raise RuntimeError("async-data-flow requires Python 3.6.0+")
