@@ -1,3 +1,6 @@
+from collections.abc import Iterable
+from typing import Callable
+
 from abc import ABC, abstractmethod
 import asyncio
 import inspect
@@ -33,7 +36,7 @@ class DataFlow:
         self.executor = AsyncDataFlow(args_visibility)
         self.inspector = DataFlowInspect()
         self.inspector.check_dataflow_args(self.dataflow) 
-        
+      
     async def __call__(self, **kwargs):
         ''' Execute Data Flow
         '''
@@ -42,4 +45,20 @@ class DataFlow:
             if not self.run_forever:
                 break
         return result
+
+    def __repr__(self):
+        return f'DataFlow({_tuple_repr(self.dataflow)})'
+
+    
+def _tuple_repr(dataflow: tuple) -> str:
+    res = '('
+    for i, task in enumerate(dataflow):
+        if isinstance(task, Iterable):
+            res += _tuple_repr(task)
+        elif isinstance(task, Callable):
+            res += task.__name__
+        if i == 0 or i < len(dataflow)-1:
+            res += ','
+    return res + ')'
+
 

@@ -7,7 +7,7 @@ with open("README.md") as desc:
 
 setup(
     name="async-data-flow",
-    version="0.0.1",
+    version="0.0.2",
     description="Asynchronous data flow",
     long_description=long_description,
     long_description_content_type="text/markdown",
