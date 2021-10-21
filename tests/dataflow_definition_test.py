@@ -1,6 +1,6 @@
 import pytest
-from asyncdataflow import DataFlow
-from asyncdataflow.exceptions import DataFlowNotCallableError, DataFlowEmptyError, DataFlowNotTupleError
+from src.asyncdataflow import DataFlow
+from src.asyncdataflow.exceptions import DataFlowNotCallableError, DataFlowEmptyError, DataFlowNotTupleError
 
 
 def foo(): pass

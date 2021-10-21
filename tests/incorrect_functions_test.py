@@ -1,6 +1,6 @@
 import pytest
-from asyncdataflow import DataFlow
-from asyncdataflow.exceptions import DataFlowFunctionArgsError
+from src.asyncdataflow import DataFlow
+from src.asyncdataflow.exceptions import DataFlowFunctionArgsError
 
 
 def foo(*args): pass
