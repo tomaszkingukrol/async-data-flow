@@ -22,7 +22,6 @@ class DataFlow:
         Args:
             dataflow: tuple - defining coroutine functions flow
             run_forever: bool - if true DataFlow is runnig in infinity loop (default False)
-            max_sleep: float - max sleep time in seconds when DataFlow return empty dictionary (default 0)
             args_visibility: str 
                 'None'    - initial arguments are visible only by first function in Data Flow, returned values are visible only 
                             by next functions in Data Flow

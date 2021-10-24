@@ -43,6 +43,12 @@ Example:
 
     asyncio.run(main())
 
+### run_forever
+
+Package can run in infinity loop:
+
+    dataflow = DataFlow((foo, bar), run_forever = False)
+
 ### amapper
 
 To use in DataFlow package function which do not return dictionary or we want to map keyword arguments to another key we can use amapper decorator:
@@ -106,21 +112,21 @@ foo and bar functions are executed concurrently, returned dictionary by them are
 
 DataFlow exception hierarchy:
 
-    +-- DataFlowException(Exception):
-        +-- DataFlowError:
-            +-- DataFlowRunItemError:
-                +-- DataFlowMergeResultError:
-                +-- DataFlowFunctionResultError:
-            +-- DataFlowDefinitionError:
-                +-- DataFlowFunctionArgsError:
-                +-- DataFlowNotCallableError:
-                +-- DataFlowNotTupleError:
-                +-- DataFlowEmptyError:
-            +-- ArgsMapperError:
-                +-- ArgsMapperInputKeyError:
-                +-- ArgsMapperOutputKeyError:
-                +-- ArgsMapperArgsError:
-        +-- DispatchError:
+    +-- DataFlowException(Exception)
+        +-- DataFlowError
+            +-- DataFlowRunItemError
+                +-- DataFlowMergeResultError
+                +-- DataFlowFunctionResultError
+            +-- DataFlowDefinitionError
+                +-- DataFlowFunctionArgsError
+                +-- DataFlowNotCallableError
+                +-- DataFlowNotTupleError
+                +-- DataFlowEmptyError
+            +-- ArgsMapperError
+                +-- ArgsMapperInputKeyError
+                +-- ArgsMapperOutputKeyError
+                +-- ArgsMapperArgsError
+        +-- DispatchError
 
 Desciption:
 - DataFlowMergeResultError: raised when returned dictionaries cannot be merged 
