@@ -1,6 +1,6 @@
 import pytest
-from asyncdataflow import amapper
-from asyncdataflow.exceptions import ArgsMapperError
+from src.asyncdataflow import amapper
+from src.asyncdataflow.exceptions import ArgsMapperError
 
 
 def foo(a, b): return a + b

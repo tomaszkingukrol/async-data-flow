@@ -11,7 +11,7 @@ def _input_mapper(func_name: str, input: dict, kwargs: dict):
             del kwargs[v]
             kwargs[k] = value
         except KeyError:
-            raise ArgsMapperInputKeyError(func_name, kwargs, v)
+            raise ArgsMapperInputKeyError(func_name, kwargs, v) from None
     return kwargs
 
 
@@ -27,7 +27,7 @@ def _output_mapper(func_name: str, output: dict or tuple or object, result: dict
             try:
                 res[k] = result[v]
             except KeyError:
-                raise ArgsMapperOutputKeyError(func_name, result, v)
+                raise ArgsMapperOutputKeyError(func_name, result, v) from None
     elif isinstance(output, tuple):
         res = {k: v for k, v in zip(output, result)}
     elif output:
@@ -66,7 +66,7 @@ def amapper(func, input: dict = None, output: dict = None):
         try:
             result = func(**kwargs)
         except TypeError:
-            raise ArgsMapperArgsError(func.__name__, kwargs)  
+            raise ArgsMapperArgsError(func.__name__, kwargs) from None
         if output:
             result = _output_mapper(func.__name__, output, result)
         return result

@@ -1,6 +1,6 @@
 import pytest
-from asyncdataflow import DataFlow
-from asyncdataflow.exceptions import DataFlowMergeResultError
+from src.asyncdataflow import DataFlow
+from src.asyncdataflow.exceptions import DataFlowMergeResultError
 
 
 async def foo(a): return {'a': a}

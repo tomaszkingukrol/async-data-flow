@@ -1,5 +1,5 @@
 import pytest
-from asyncdataflow import DataFlow
+from src.asyncdataflow import DataFlow
 
 
 def foo(): pass

@@ -1,6 +1,6 @@
 import pytest
-from asyncdataflow.executor import _merge_kwargs
-from asyncdataflow.exceptions import DataFlowMergeResultError
+from src.asyncdataflow.executor import _merge_kwargs
+from src.asyncdataflow.exceptions import DataFlowMergeResultError
 
 
 CORRECT_MERGE_2_DICT = [

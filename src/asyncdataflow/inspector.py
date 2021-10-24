@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import Callable, Tuple
+from typing import Callable
 
 import inspect
 
