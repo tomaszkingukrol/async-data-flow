@@ -3,4 +3,4 @@ from .mapper import amapper
 from .dispatch import fdispatch
 
 
-__all__ = ['DataFlow', 'args_mapper', 'fdispatch']
+__all__ = ['DataFlow', 'amapper', 'fdispatch']
