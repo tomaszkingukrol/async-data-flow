@@ -1,3 +1,5 @@
+import asyncio
+import inspect
 from functools import wraps
 from .exceptions import ArgsMapperInputKeyError, ArgsMapperOutputKeyError, ArgsMapperArgsError
 
@@ -59,15 +61,28 @@ def amapper(func, input: dict = None, output: dict = None):
         avait DataFlow((bar,))(input = 1) -> {'A': 1, '2A': 2}
     '''
     input, output = input, output
-    @wraps(func)
-    def wrapper(**kwargs):
-        if input: 
-            kwargs = _input_mapper(func.__name__, input, kwargs)
-        try:
-            result = func(**kwargs)
-        except TypeError:
-            raise ArgsMapperArgsError(func.__name__, kwargs) from None
-        if output:
-            result = _output_mapper(func.__name__, output, result)
-        return result
+    if inspect.iscoroutinefunction(func):
+        @wraps(func)
+        async def wrapper(**kwargs):
+            if input: 
+                kwargs = _input_mapper(func.__name__, input, kwargs)
+            try:
+                result = await func(**kwargs)
+            except TypeError:
+                raise ArgsMapperArgsError(func.__name__, kwargs) from None
+            if output:
+                result = _output_mapper(func.__name__, output, result)
+            return result
+    else:
+        @wraps(func)
+        def wrapper(**kwargs):
+            if input: 
+                kwargs = _input_mapper(func.__name__, input, kwargs)
+            try:
+                result = func(**kwargs)
+            except TypeError:
+                raise ArgsMapperArgsError(func.__name__, kwargs) from None
+            if output:
+                result = _output_mapper(func.__name__, output, result)
+            return result
     return wrapper
